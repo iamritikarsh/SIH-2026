@@ -77,7 +77,7 @@ function Sidebar({ state }: { state: SystemState | null }) {
 }
 
 /* ── Topbar ─────────────────────────────────────────────── */
-function Topbar({ state }: { state: SystemState | null }) {
+function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 'CONNECTING' | 'ONLINE' | 'OFFLINE' }) {
     const [search, setSearch] = useState('');
     const location = useLocation();
 
@@ -103,15 +103,34 @@ function Topbar({ state }: { state: SystemState | null }) {
             <div className="flex-1" />
 
             {/* Status pills */}
-            {state && (
-                <div className="hidden md:flex items-center gap-4">
-                    <span className="status-online">SYSTEM ONLINE</span>
-                    <span className="text-[var(--border)] text-xs">|</span>
-                    <span className="mono text-[11px] text-[var(--text-secondary)]">
-                        {new Date(state.simulation_time).toLocaleTimeString()}
+            <div className="hidden md:flex items-center gap-4">
+                {connStatus === 'CONNECTING' && (
+                    <span className="text-amber-400 text-[10px] font-bold tracking-wider uppercase animate-pulse flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                        TRAFFIC ENGINE STARTING...
                     </span>
-                </div>
-            )}
+                )}
+                {connStatus === 'OFFLINE' && (
+                    <div className="flex items-center gap-3">
+                        <span className="text-red-400 text-[10px] font-bold tracking-wider uppercase flex items-center gap-2">
+                            <AlertTriangle size={12} />
+                            BACKEND TEMPORARILY UNAVAILABLE
+                        </span>
+                        <button onClick={() => window.location.reload()} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-[10px] text-white transition-colors border border-white/10">
+                            RETRY CONNECTION
+                        </button>
+                    </div>
+                )}
+                {connStatus === 'ONLINE' && state && (
+                    <>
+                        <span className="status-online">SYSTEM ONLINE</span>
+                        <span className="text-[var(--border)] text-xs">|</span>
+                        <span className="mono text-[11px] text-[var(--text-secondary)]">
+                            {new Date(state.simulation_time).toLocaleTimeString()}
+                        </span>
+                    </>
+                )}
+            </div>
 
             {/* Search */}
             <div className="relative">
@@ -136,14 +155,31 @@ function Topbar({ state }: { state: SystemState | null }) {
 /* ── App ─────────────────────────────────────────────────── */
 export default function App() {
     const [state, setState] = useState<SystemState | null>(null);
+    const [connStatus, setConnStatus] = useState<'CONNECTING' | 'ONLINE' | 'OFFLINE'>('CONNECTING');
 
     useEffect(() => {
+        let mounted = true;
+        let failCount = 0;
+
         const fetchState = async () => {
-            try { setState(await api.getState()); } catch {}
+            try { 
+                const data = await api.getState();
+                if (mounted) {
+                    setState(data);
+                    setConnStatus('ONLINE');
+                    failCount = 0;
+                }
+            } catch (err) {
+                if (mounted) {
+                    failCount++;
+                    if (failCount > 2) setConnStatus('OFFLINE');
+                }
+            }
         };
+
         fetchState();
-        const iv = setInterval(fetchState, 1000);
-        return () => clearInterval(iv);
+        const iv = setInterval(fetchState, 2000); // 2 second interval to avoid spamming during sleep
+        return () => { mounted = false; clearInterval(iv); };
     }, []);
 
     return (
@@ -151,7 +187,7 @@ export default function App() {
             <div className="flex h-screen overflow-hidden">
                 <Sidebar state={state} />
                 <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-                    <Topbar state={state} />
+                    <Topbar state={state} connStatus={connStatus} />
                     <main className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-[var(--bg-base)]">
                         <Routes>
                             <Route path="/" element={<Dashboard />} />
