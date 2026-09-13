@@ -82,15 +82,22 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
     const [search, setSearch] = useState('');
     const location = useLocation();
 
-    const pageTitle: Record<string, string> = {
-        '/':          'Command Dashboard',
-        '/cameras':   'Live Camera Feeds',
-        '/tracking':  'Vehicle Tracking Engine',
-        '/analytics': 'Traffic Analytics',
-        '/alerts':    'System Alerts',
+    const pageTitles: Record<string, { tab: string; breadcrumb: string }> = {
+        '/':          { tab: 'CITY TRAFFIC | Command Dashboard',    breadcrumb: 'Command Dashboard' },
+        '/cameras':   { tab: 'CITY TRAFFIC | Live Camera Feeds',    breadcrumb: 'Live Camera Feeds' },
+        '/tracking':  { tab: 'CITY TRAFFIC | Vehicle Tracking',     breadcrumb: 'Vehicle Tracking Engine' },
+        '/analytics': { tab: 'CITY TRAFFIC | Traffic Analytics',    breadcrumb: 'Traffic Analytics' },
+        '/alerts':    { tab: 'CITY TRAFFIC | System Alerts',        breadcrumb: 'System Alerts' },
     };
 
-    const title = pageTitle[location.pathname] || 'Traffic Command Centre';
+    const current = pageTitles[location.pathname] || { tab: 'CITY TRAFFIC | Intelligence Engine', breadcrumb: 'Traffic Command Centre' };
+
+    // Update browser tab title on every route change
+    useEffect(() => {
+        document.title = current.tab;
+    }, [current.tab]);
+
+    const title = current.breadcrumb;
 
     return (
         <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] flex items-center gap-6 px-6 flex-none z-10">
