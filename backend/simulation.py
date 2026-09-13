@@ -128,38 +128,27 @@ class TrafficSimulator:
         self.trajectories = {v.id: Trajectory(vehicle_id=v.id, path=[]) for v in VEHICLES}
         self.start_sim_time = datetime.now()
         self.current_sim_time = self.start_sim_time
-        self.schedule_initial_traffic()
         
-    def schedule_initial_traffic(self):
-        self.scheduled_detections = []
+        # State for continuous route progression
+        self.route_states = {}
         for v_id, route in ROUTES.items():
-            for node in route:
-                self.scheduled_detections.append({
-                    "vehicle_id": v_id,
-                    "camera_id": node["cam"],
-                    "trigger_time": self.start_sim_time + timedelta(seconds=node["offset"])
-                })
+            if len(route) > 0:
+                self.route_states[v_id] = {
+                    "node_idx": 0,
+                    "next_time": self.start_sim_time + timedelta(seconds=route[0]["offset"])
+                }
                 
-        # Add some random traffic
-        for _ in range(20):
-            v = random.choice(VEHICLES)
-            cam = random.choice(CAMERAS).id
-            offset = random.randint(10, 300)
-            self.scheduled_detections.append({
-                "vehicle_id": v.id,
-                "camera_id": cam,
-                "trigger_time": self.start_sim_time + timedelta(seconds=offset)
-            })
-            
-        self.scheduled_detections.sort(key=lambda x: x["trigger_time"])
-
+        # State for background random traffic per camera
+        self.cam_next_random = {
+            cam.id: self.start_sim_time + timedelta(seconds=random.uniform(0, 5))
+            for cam in CAMERAS
+        }
+        
     def start(self):
         if not self.is_simulating:
             self.is_simulating = True
-            # Adjust start times so we continue from where we left off
             now = datetime.now().timestamp()
             self.start_real_time = now
-            # We don't change start_sim_time, but we will calculate current_sim_time based on delta
             self.last_tick_time = now
             
     def pause(self):
@@ -179,27 +168,60 @@ class TrafficSimulator:
         delta_sim = delta_real * self.simulation_speed
         self.current_sim_time += timedelta(seconds=delta_sim)
         
-        self._process_scheduled_events()
-        self._generate_random_alerts()
+        self._process_continuous_traffic()
         
-    def _process_scheduled_events(self):
-        while self.scheduled_detections and self.scheduled_detections[0]["trigger_time"] <= self.current_sim_time:
-            det = self.scheduled_detections.pop(0)
-            self._trigger_detection(det["vehicle_id"], det["camera_id"], det["trigger_time"])
+    def _process_continuous_traffic(self):
+        # 1. Progress predefined routes (Demo vehicles)
+        for v_id, state in list(self.route_states.items()):
+            if state["next_time"] <= self.current_sim_time:
+                route = ROUTES[v_id]
+                idx = state["node_idx"]
+                cam_id = route[idx]["cam"]
+                
+                self._trigger_detection(v_id, cam_id, state["next_time"])
+                
+                # Advance to next node in route
+                if idx + 1 < len(route):
+                    next_offset = route[idx + 1]["offset"] - route[idx]["offset"]
+                    self.route_states[v_id] = {
+                        "node_idx": idx + 1,
+                        "next_time": state["next_time"] + timedelta(seconds=next_offset)
+                    }
+                else:
+                    # Loop route after a delay
+                    self.route_states[v_id] = {
+                        "node_idx": 0,
+                        "next_time": state["next_time"] + timedelta(seconds=random.uniform(60, 120))
+                    }
+                    # Clear trajectory so it draws fresh
+                    self.trajectories[v_id].path = []
+                    
+        # 2. Continuous background traffic for ALL cameras so they are never "0 detections" for long
+        for cam_id, next_time in list(self.cam_next_random.items()):
+            if next_time <= self.current_sim_time:
+                # Pick a random vehicle that IS NOT currently on a strict route
+                free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
+                if not free_vehicles:
+                    free_vehicles = VEHICLES # fallback
+                    
+                v = random.choice(free_vehicles)
+                self._trigger_detection(v.id, cam_id, next_time)
+                
+                # Schedule next random vehicle for this camera (dense traffic = short delay)
+                # Vary delay to create "waves" of traffic
+                delay = random.uniform(2.0, 12.0)
+                self.cam_next_random[cam_id] = next_time + timedelta(seconds=delay)
             
     def _trigger_detection(self, v_id: str, cam_id: str, ts: datetime):
         v = next((v for v in VEHICLES if v.id == v_id), None)
         if not v:
             return
             
-        speed = random.uniform(30.0, 80.0)
+        speed = random.uniform(35.0, 75.0)
         
-        # Calculate match confidence if this vehicle was seen before
         match_conf = None
         traj = self.trajectories.get(v_id)
-        if traj and len(traj.path) > 0:
-            last_node = traj.path[-1]
-            # Simple simulation: high confidence
+        if traj and len(traj.path) > 0 and traj.path[-1].camera_id != cam_id:
             match_conf = round(random.uniform(92.0, 99.5), 1)
             
         event = DetectionEvent(
@@ -215,14 +237,14 @@ class TrafficSimulator:
             timestamp=ts.isoformat(),
             speed=round(speed, 1)
         )
-        self.events.insert(0, event) # newest first
-        if len(self.events) > 500:
-            self.events = self.events[:500]
+        self.events.insert(0, event)
+        if len(self.events) > 800:
+            self.events = self.events[:800]
             
         if traj:
             traj.path.append(TrajectoryNode(camera_id=cam_id, timestamp=ts.isoformat(), speed=speed))
             
-        if speed > 75:
+        if speed > 70:
             self.alerts.insert(0, Alert(
                 id=f"al-{uuid.uuid4().hex[:8]}",
                 type="HIGH_SPEED",
@@ -233,27 +255,13 @@ class TrafficSimulator:
             ))
             
         if match_conf and match_conf > 90:
-            if random.random() < 0.3: # Don't spam, just some of them
-                from_cam = traj.path[-1].camera_id if traj and len(traj.path) > 0 else "Unknown"
+            if random.random() < 0.4:
+                from_cam = traj.path[-2].camera_id if len(traj.path) > 1 else "Unknown"
                 self.alerts.insert(0, Alert(
                     id=f"al-{uuid.uuid4().hex[:8]}",
                     type="VEHICLE_MATCHED",
                     title="VEHICLE MATCHED",
                     message=f"{v.plate} {from_cam} → {cam_id} ({match_conf}% match)",
-                    timestamp=ts.isoformat(),
-                    reference_id=v_id
-                ))
-                
-        # Unusual route detection (skipping cameras in a known sequence or jumping far)
-        if traj and len(traj.path) >= 1:
-            last_cam = traj.path[-1].camera_id
-            # Just a simple heuristic for the simulation
-            if last_cam == "CAM-01" and cam_id == "CAM-06" and random.random() < 0.5:
-                self.alerts.insert(0, Alert(
-                    id=f"al-{uuid.uuid4().hex[:8]}",
-                    type="UNUSUAL_ROUTE",
-                    title="UNUSUAL ROUTE",
-                    message=f"{v.plate} made unexpected transition {last_cam} → {cam_id}",
                     timestamp=ts.isoformat(),
                     reference_id=v_id
                 ))
