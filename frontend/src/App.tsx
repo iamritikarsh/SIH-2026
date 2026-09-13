@@ -12,6 +12,7 @@ import VehicleTracking from './pages/VehicleTracking';
 import Dashboard from './pages/Dashboard';
 import TrafficAnalytics from './pages/TrafficAnalytics';
 import SystemAlerts from './pages/SystemAlerts';
+import AppLoader from './components/AppLoader';
 
 /* ── Sidebar ────────────────────────────────────────────── */
 function Sidebar({ state }: { state: SystemState | null }) {
@@ -156,6 +157,9 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
 export default function App() {
     const [state, setState] = useState<SystemState | null>(null);
     const [connStatus, setConnStatus] = useState<'CONNECTING' | 'ONLINE' | 'OFFLINE'>('CONNECTING');
+    // appReady controls the global full-screen loader. 
+    // It starts false on every cold page load / browser reload.
+    const [appReady, setAppReady] = useState(false);
 
     useEffect(() => {
         let mounted = true;
@@ -178,9 +182,22 @@ export default function App() {
         };
 
         fetchState();
-        const iv = setInterval(fetchState, 2000); // 2 second interval to avoid spamming during sleep
+        const iv = setInterval(fetchState, 2000);
         return () => { mounted = false; clearInterval(iv); };
     }, []);
+
+    // Show AppLoader on every full browser page load.
+    // Once it calls onComplete we reveal the app and never show it again
+    // until the next full browser reload (state is not in sessionStorage,
+    // so navigating between SPA routes never resets it).
+    if (!appReady) {
+        return (
+            <AppLoader
+                onComplete={() => setAppReady(true)}
+                backendOffline={connStatus === 'OFFLINE'}
+            />
+        );
+    }
 
     return (
         <BrowserRouter>
