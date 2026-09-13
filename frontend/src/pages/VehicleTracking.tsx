@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import {
     Search, MapPin, Navigation, Clock, CheckCircle2,
@@ -17,15 +17,79 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+/* ── Custom marker factories ───────────────────────────── */
+function makeCamIcon(visited: boolean, isFirst: boolean) {
+    const bg   = isFirst  ? '#2563eb' : visited ? '#16a34a' : '#6b7280';
+    const ring = isFirst  ? '#93c5fd' : visited ? '#86efac' : '#9ca3af';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="38" viewBox="0 0 32 38">
+      <circle cx="16" cy="15" r="13" fill="${bg}" stroke="${ring}" stroke-width="2.5" opacity="0.95"/>
+      <svg x="7" y="6" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="15" height="10" rx="2"/>
+        <path d="M17 9l4-2v10l-4-2"/>
+        <circle cx="8.5" cy="12" r="2" fill="white" stroke="none"/>
+      </svg>
+      <polygon points="12,28 20,28 16,38" fill="${bg}" opacity="0.95"/>
+    </svg>`;
+    return L.divIcon({
+        html: svg,
+        className: '',
+        iconSize: [32, 38],
+        iconAnchor: [16, 38],
+        popupAnchor: [0, -40],
+    });
+}
+
+function makeVehicleIcon() {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="17" fill="#1d4ed8" stroke="#93c5fd" stroke-width="2" opacity="0.95"/>
+      <svg x="6" y="8" width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 17H3a1 1 0 01-1-1v-5l2-6h14l2 6v5a1 1 0 01-1 1h-2"/>
+        <circle cx="7" cy="17" r="2"/>
+        <circle cx="17" cy="17" r="2"/>
+        <path d="M5 9h14"/>
+      </svg>
+    </svg>`;
+    return L.divIcon({
+        html: svg,
+        className: '',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -22],
+    });
+}
+
+/* ── Auto-fit map to trajectory bounds ────────────────── */
+function MapAutoFit({ positions }: { positions: [number, number][] }) {
+    const map = useMap();
+    const fittedRef = useRef<string>('');
+
+    useEffect(() => {
+        if (positions.length < 1) return;
+        const key = positions.map(p => p.join(',')).join('|');
+        if (key === fittedRef.current) return;
+        fittedRef.current = key;
+
+        if (positions.length === 1) {
+            map.setView(positions[0], 14, { animate: true, duration: 0.8 });
+        } else {
+            const bounds = L.latLngBounds(positions);
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14, animate: true, duration: 0.8 });
+        }
+    }, [positions, map]);
+
+    return null;
+}
+
+/* ── Main component ────────────────────────────────────── */
 export default function VehicleTracking() {
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
 
-    const [searchInput, setSearchInput] = useState(query);
-    const [cameras, setCameras] = useState<Camera[]>([]);
-    const [vehicleEvents, setVehicleEvents] = useState<DetectionEvent[]>([]);
-    const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-    const [trajectory, setTrajectory] = useState<Trajectory | null>(null);
+    const [searchInput, setSearchInput]         = useState(query);
+    const [cameras, setCameras]                 = useState<Camera[]>([]);
+    const [vehicleEvents, setVehicleEvents]     = useState<DetectionEvent[]>([]);
+    const [vehicle, setVehicle]                 = useState<Vehicle | null>(null);
+    const [trajectory, setTrajectory]           = useState<Trajectory | null>(null);
     const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
 
     useEffect(() => { api.getCameras().then(setCameras); }, []);
@@ -63,15 +127,23 @@ export default function VehicleTracking() {
 
     const camMap = Object.fromEntries(cameras.map(c => [c.id, c]));
 
-    const trajectoryPositions = (trajectory?.path.map(n => {
-        const c = camMap[n.camera_id];
-        return c ? [c.lat, c.lng] as [number, number] : null;
-    }).filter(Boolean) as [number, number][]) || [];
-
-    /* Deduplicated journey nodes */
+    /* Deduplicate trajectory nodes for journey display */
     const deduplicatedEvents = vehicleEvents.filter(
         (evt, i, arr) => i === 0 || evt.camera_id !== arr[i - 1].camera_id
     );
+
+    /* Unique camera positions in visit order for polyline + auto-fit */
+    const trajectoryPositions: [number, number][] = deduplicatedEvents
+        .map(evt => {
+            const c = camMap[evt.camera_id];
+            return c ? [c.lat, c.lng] as [number, number] : null;
+        })
+        .filter((p): p is [number, number] => p !== null);
+
+    /* Vehicle last-known position = last trajectory point */
+    const vehiclePos = trajectoryPositions.length > 0
+        ? trajectoryPositions[trajectoryPositions.length - 1]
+        : null;
 
     const avgMatchConf = vehicleEvents.length > 1
         ? Math.round(vehicleEvents.slice(1).reduce((s, e) => s + (e.match_confidence || 0), 0) / (vehicleEvents.length - 1))
@@ -79,6 +151,11 @@ export default function VehicleTracking() {
 
     const firstEvt = deduplicatedEvents[0];
     const lastEvt  = deduplicatedEvents[deduplicatedEvents.length - 1];
+
+    const visitedCamIds = new Set(deduplicatedEvents.map(e => e.camera_id));
+    const highlightedCamId = highlightedEventId
+        ? vehicleEvents.find(e => e.id === highlightedEventId)?.camera_id
+        : null;
 
     return (
         <div className="flex flex-col gap-5 max-w-[1400px] mx-auto">
@@ -135,7 +212,6 @@ export default function VehicleTracking() {
                         {/* Vehicle Identity Panel */}
                         <div className="panel overflow-hidden">
                             <div className="relative px-5 py-5 bg-[var(--bg-card)]">
-                                {/* Subtle Car silhouette/icon in the background */}
                                 <div className="absolute top-4 right-4 opacity-[0.03] pointer-events-none">
                                     <Car size={120} />
                                 </div>
@@ -237,7 +313,7 @@ export default function VehicleTracking() {
                                 )}
                             </div>
 
-                            {/* Why matched — expandable */}
+                            {/* Why matched */}
                             {deduplicatedEvents.length > 1 && (
                                 <details className="border-t border-[var(--border-subtle)] text-[11px] [&_summary::-webkit-details-marker]:hidden group/details">
                                     <summary className="flex justify-between items-center px-4 py-2.5 cursor-pointer hover:bg-white/[0.025] select-none text-[var(--text-muted)] font-semibold uppercase tracking-wider">
@@ -294,53 +370,144 @@ export default function VehicleTracking() {
                     {/* ─ RIGHT COLUMN ────────────────────────────── */}
                     <div className="flex flex-col gap-5 min-h-0">
 
-                        {/* Map */}
-                        <div className="panel flex-1 flex flex-col overflow-hidden" style={{ minHeight: 380 }}>
+                        {/* ── Map ──────────────────────────────────────── */}
+                        <div className="panel flex-1 flex flex-col overflow-hidden" style={{ minHeight: 440 }}>
                             <div className="panel-header flex-none">
                                 <span className="text-[13px] font-semibold text-[var(--text-primary)] flex items-center gap-2">
                                     <MapPin size={13} className="text-blue-400" /> City Map Trajectory
                                 </span>
-                                <span className="mono text-[10px] text-[var(--text-secondary)] bg-[var(--bg-base)] px-2 py-1 rounded">
-                                    {trajectoryPositions.length} nodes tracked
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    {deduplicatedEvents.length > 0 && (
+                                        <span className="mono text-[10px] text-green-400 font-bold">
+                                            {deduplicatedEvents.length} CAMERAS
+                                        </span>
+                                    )}
+                                    {avgMatchConf > 0 && (
+                                        <span className="mono text-[10px] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded">
+                                            {avgMatchConf}% MATCH
+                                        </span>
+                                    )}
+                                    <span className="mono text-[10px] text-[var(--text-muted)] bg-[var(--bg-base)] px-2 py-0.5 rounded border border-[var(--border-subtle)]">
+                                        OpenStreetMap
+                                    </span>
+                                </div>
                             </div>
-                            <div className="flex-1 relative bg-[var(--bg-base)]">
+
+                            <div className="flex-1 relative" style={{ minHeight: 380 }}>
                                 {cameras.length > 0 && (
                                     <MapContainer
                                         center={[28.6139, 77.2090]}
                                         zoom={12}
                                         style={{ height: '100%', width: '100%' }}
                                         className="z-0"
+                                        zoomControl={true}
                                     >
+                                        {/* ── Clean light map tile — no API key required ── */}
                                         <TileLayer
-                                            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                            maxZoom={19}
                                         />
 
-                                        {cameras.map(cam => {
-                                            const isVisited = trajectory?.path.some(n => n.camera_id === cam.id);
-                                            const isHighlighted = highlightedEventId != null && vehicleEvents.find(e => e.id === highlightedEventId)?.camera_id === cam.id;
+                                        {/* ── Auto-fit to trajectory ── */}
+                                        {trajectoryPositions.length > 0 && (
+                                            <MapAutoFit positions={trajectoryPositions} />
+                                        )}
+
+                                        {/* ── All cameras — with custom icons ── */}
+                                        {cameras.map((cam, i) => {
+                                            const visited   = visitedCamIds.has(cam.id);
+                                            const isFirst   = deduplicatedEvents[0]?.camera_id === cam.id;
+                                            const evtForCam = deduplicatedEvents.find(e => e.camera_id === cam.id);
+                                            const opacity   = highlightedCamId
+                                                ? (cam.id === highlightedCamId ? 1 : visited ? 0.5 : 0.15)
+                                                : visited ? 1 : 0.2;
+
                                             return (
                                                 <Marker
                                                     key={cam.id}
                                                     position={[cam.lat, cam.lng]}
-                                                    opacity={isHighlighted ? 1 : isVisited ? 0.75 : 0.25}
+                                                    icon={makeCamIcon(visited, isFirst)}
+                                                    opacity={opacity}
                                                 >
                                                     <Popup>
-                                                        <strong>{cam.id}</strong><br />{cam.name}
+                                                        <div style={{ minWidth: 170, fontFamily: 'Inter, sans-serif' }}>
+                                                            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4, color: '#1e293b' }}>
+                                                                {cam.id} — {cam.name}
+                                                            </div>
+                                                            {evtForCam ? (
+                                                                <>
+                                                                    <div style={{ fontSize: 11, color: '#475569', marginBottom: 2 }}>
+                                                                        <b>Vehicle:</b> {evtForCam.plate}
+                                                                    </div>
+                                                                    <div style={{ fontSize: 11, color: '#475569', marginBottom: 2 }}>
+                                                                        <b>Time:</b> {new Date(evtForCam.timestamp).toLocaleTimeString()}
+                                                                    </div>
+                                                                    <div style={{ fontSize: 11, color: '#475569', marginBottom: 6 }}>
+                                                                        <b>Speed:</b> {evtForCam.speed} km/h
+                                                                    </div>
+                                                                    <div style={{ display: 'inline-block', background: '#dcfce7', color: '#16a34a', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
+                                                                        ✓ MATCHED
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <div style={{ fontSize: 11, color: '#94a3b8' }}>Not on this vehicle's route</div>
+                                                            )}
+                                                        </div>
                                                     </Popup>
                                                 </Marker>
                                             );
                                         })}
 
+                                        {/* ── Trajectory route line ── */}
                                         {trajectoryPositions.length > 1 && (
-                                            <Polyline
-                                                positions={trajectoryPositions}
-                                                color="#3b7aeb"
-                                                weight={3}
-                                                opacity={0.85}
-                                                dashArray="8 6"
-                                            />
+                                            <>
+                                                {/* Shadow / glow line */}
+                                                <Polyline
+                                                    positions={trajectoryPositions}
+                                                    color="#93c5fd"
+                                                    weight={8}
+                                                    opacity={0.25}
+                                                />
+                                                {/* Main solid route */}
+                                                <Polyline
+                                                    positions={trajectoryPositions}
+                                                    color="#2563eb"
+                                                    weight={4}
+                                                    opacity={0.9}
+                                                />
+                                                {/* Dashed direction overlay */}
+                                                <Polyline
+                                                    positions={trajectoryPositions}
+                                                    color="#ffffff"
+                                                    weight={1.5}
+                                                    opacity={0.6}
+                                                    dashArray="4 12"
+                                                />
+                                            </>
+                                        )}
+
+                                        {/* ── Vehicle last-known position ── */}
+                                        {vehiclePos && (
+                                            <Marker
+                                                position={vehiclePos}
+                                                icon={makeVehicleIcon()}
+                                                zIndexOffset={1000}
+                                            >
+                                                <Popup>
+                                                    <div style={{ fontFamily: 'Inter, sans-serif' }}>
+                                                        <div style={{ fontWeight: 700, fontSize: 13, color: '#1d4ed8', marginBottom: 4 }}>
+                                                            {vehicle.plate}
+                                                        </div>
+                                                        <div style={{ fontSize: 11, color: '#475569' }}>
+                                                            {vehicle.color} {vehicle.type}
+                                                        </div>
+                                                        <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>
+                                                            Last seen: {lastEvt ? camMap[lastEvt.camera_id]?.name : '—'}
+                                                        </div>
+                                                    </div>
+                                                </Popup>
+                                            </Marker>
                                         )}
                                     </MapContainer>
                                 )}
