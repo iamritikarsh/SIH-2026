@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Camera, DetectionEvent } from '../types';
 import { api } from '../services/api';
-import { Video, ExternalLink } from 'lucide-react';
+import { Video, ExternalLink, PlaySquare } from 'lucide-react';
 
 // Traffic-scene images per camera — keyed by camera ID for dynamic lookup
 const CAM_IMAGES: Record<string, string> = {
@@ -112,10 +112,15 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
 
                 {/* Track button on hover */}
                 {latest && (
-                    <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="flex items-center gap-1.5 bg-[var(--bg-base)]/90 border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-semibold px-4 py-1.5 rounded">
-                            <ExternalLink size={12} /> TRACK THIS VEHICLE
-                        </div>
+                    <div className="absolute inset-0 flex items-end justify-center pb-4 gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={(e) => { e.stopPropagation(); navigate(`/tracking?q=${latest.plate}`); }} 
+                                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 text-[10px] font-bold px-3 py-1.5 rounded transition-colors shadow">
+                            <ExternalLink size={12} /> TRACK
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); navigate(`/replay?vehicle=${latest.plate}`); }} 
+                                className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 text-[10px] font-bold px-3 py-1.5 rounded transition-colors shadow">
+                            <PlaySquare size={12} /> REPLAY
+                        </button>
                     </div>
                 )}
 

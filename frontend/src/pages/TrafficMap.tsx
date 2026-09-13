@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MapContainer, TileLayer, Circle, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
@@ -233,9 +233,14 @@ export default function TrafficMap() {
                                                     VIEW CAMERA
                                                 </button>
                                                 {trajectory && isVisited && (
-                                                    <button onClick={() => navigate(`/tracking?q=${query}`)} className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold tracking-wider rounded transition-colors shadow">
-                                                        TRACK VEHICLE
-                                                    </button>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => navigate(`/tracking?q=${query}`)} className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold tracking-wider rounded transition-colors shadow">
+                                                            TRACK
+                                                        </button>
+                                                        <button onClick={() => navigate(`/replay?vehicle=${query}`)} className="flex-1 py-2 bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold tracking-wider rounded transition-colors shadow">
+                                                            REPLAY
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                         </Popup>

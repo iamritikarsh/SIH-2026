@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard, Video, Map, MapPin, BarChart3, Bell, Search, Settings,
-    Activity, ChevronRight, AlertTriangle
+    Activity, ChevronRight, AlertTriangle, PlaySquare
 } from 'lucide-react';
 import { api } from './services/api';
 import type { SystemState } from './types';
@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import TrafficAnalytics from './pages/TrafficAnalytics';
 import SystemAlerts from './pages/SystemAlerts';
 import TrafficMap from './pages/TrafficMap';
+import VehicleJourneyReplay from './pages/VehicleJourneyReplay';
 import AppLoader from './components/AppLoader';
 
 /* ── Sidebar ────────────────────────────────────────────── */
@@ -21,6 +22,7 @@ function Sidebar({ state }: { state: SystemState | null }) {
         { path: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
         { path: '/cameras', label: 'Live Cameras', icon: Video },
         { path: '/tracking', label: 'Vehicle Tracking', icon: Map },
+        { path: '/replay', label: 'Vehicle Journey Replay', icon: PlaySquare },
         { path: '/traffic-map', label: 'Traffic Map', icon: MapPin },
         { path: '/analytics', label: 'Traffic Analytics', icon: BarChart3 },
         { path: '/alerts', label: 'Alerts', icon: Bell },
@@ -88,6 +90,8 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
         '/':          { tab: 'CITY TRAFFIC | Command Dashboard',    breadcrumb: 'Command Dashboard' },
         '/cameras':   { tab: 'CITY TRAFFIC | Live Camera Feeds',    breadcrumb: 'Live Camera Feeds' },
         '/tracking':  { tab: 'CITY TRAFFIC | Vehicle Tracking',     breadcrumb: 'Vehicle Tracking Engine' },
+        '/replay':    { tab: 'CITY TRAFFIC | Journey Replay',       breadcrumb: 'Vehicle Journey Replay' },
+        '/traffic-map': { tab: 'CITY TRAFFIC | Traffic Map',        breadcrumb: 'Live City Map' },
         '/analytics': { tab: 'CITY TRAFFIC | Traffic Analytics',    breadcrumb: 'Traffic Analytics' },
         '/alerts':    { tab: 'CITY TRAFFIC | System Alerts',        breadcrumb: 'System Alerts' },
     };
@@ -227,6 +231,7 @@ export default function App() {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/cameras" element={<LiveCameras />} />
                             <Route path="/tracking" element={<VehicleTracking />} />
+                            <Route path="/replay" element={<VehicleJourneyReplay />} />
                             <Route path="/traffic-map" element={<TrafficMap />} />
                             <Route path="/analytics" element={<TrafficAnalytics />} />
                             <Route path="/alerts" element={<SystemAlerts />} />

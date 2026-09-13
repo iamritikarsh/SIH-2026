@@ -177,10 +177,16 @@ export default function VehicleTracking() {
                             className="bg-[var(--bg-base)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-[13px] rounded pl-9 pr-4 py-2 focus:outline-none focus:border-[var(--blue)] w-72 transition-colors"
                         />
                     </div>
-                    <button type="submit"
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-bold px-6 py-2 rounded tracking-wide transition-colors">
-                        TRACK
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button type="submit"
+                            className="bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-bold px-6 py-2 rounded tracking-wide transition-colors">
+                            TRACK
+                        </button>
+                        <button type="button" onClick={() => window.location.href = `/replay?vehicle=${searchInput}`}
+                            className="bg-slate-800 hover:bg-slate-700 text-white text-[12px] font-bold px-6 py-2 rounded tracking-wide transition-colors shadow">
+                            REPLAY JOURNEY
+                        </button>
+                    </div>
                 </form>
             </div>
 
