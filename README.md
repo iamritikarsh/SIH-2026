@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://www.sih.gov.in/img1/logo/SIH_logo_2023_horizontal.png" alt="Smart India Hackathon Logo" width="350" />
+  <img src="docs/assets/sih-logo.png" alt="Smart India Hackathon Logo" width="350" />
   
   <br />
   <br />
