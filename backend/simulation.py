@@ -122,7 +122,11 @@ class TrafficSimulator:
         self.reset()
         
     def reset(self):
-        self.is_simulating = False
+        self.is_simulating = True
+        now = datetime.now().timestamp()
+        self.start_real_time = now
+        self.last_tick_time = now
+        
         self.events = []
         self.alerts = []
         self.trajectories = {v.id: Trajectory(vehicle_id=v.id, path=[]) for v in VEHICLES}
@@ -140,9 +144,19 @@ class TrafficSimulator:
                 
         # State for background random traffic per camera
         self.cam_next_random = {
-            cam.id: self.start_sim_time + timedelta(seconds=random.uniform(0, 5))
+            cam.id: self.start_sim_time + timedelta(seconds=random.uniform(2, 8))
             for cam in CAMERAS
         }
+        
+        # Inject an initial snapshot so no camera is empty at load
+        for cam in CAMERAS:
+            num_vehicles = random.randint(1, 3)
+            free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
+            random.shuffle(free_vehicles)
+            for i in range(min(num_vehicles, len(free_vehicles))):
+                # Spread timestamps slightly backwards so they look like they just happened
+                ts = self.start_sim_time - timedelta(seconds=random.uniform(0, 4))
+                self._trigger_detection(free_vehicles[i].id, cam.id, ts)
         
     def start(self):
         if not self.is_simulating:
