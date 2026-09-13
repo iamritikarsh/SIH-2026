@@ -39,7 +39,12 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                     <span className="mono text-[11px] font-semibold text-[var(--text-secondary)]">{cam.id}</span>
                     <span className="text-[12px] font-semibold text-[var(--text-primary)]">{cam.name}</span>
                 </div>
-                <div className="badge-live">LIVE</div>
+                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded border text-[9px] font-bold tracking-wider ${
+                    latest ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-blue-500/10 border-blue-500/20 text-blue-500'
+                }`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${latest ? 'bg-green-500 animate-pulse' : 'bg-blue-500 animate-pulse'}`} />
+                    {latest ? 'LIVE' : 'SCANNING'}
+                </div>
             </div>
 
             {/* Feed area */}
@@ -106,15 +111,19 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                 )}
 
                 {!latest && (
-                    <div className="absolute inset-0 flex items-center justify-center text-[var(--text-muted)] text-[11px]">
-                        Awaiting detections…
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="mono text-[10px] text-blue-400 font-bold tracking-widest uppercase">Scanning</span>
+                        </div>
+                        <span className="text-[9px] text-white/50 mono">0 vehicles detected</span>
                     </div>
                 )}
             </div>
 
             {/* Stats row */}
             <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
-                <span className="label-xs">{recent.length} detections</span>
+                <span className="label-xs">{recent.length} VEHICLE{recent.length === 1 ? '' : 'S'} DETECTED</span>
                 {latest && (
                     <span className="mono text-[10px] text-amber-400">{latest.speed} km/h</span>
                 )}
@@ -143,7 +152,14 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                     </tbody>
                 </table>
                 {recent.length === 0 && (
-                    <div className="text-center text-[var(--text-muted)] text-[11px] py-4">Monitoring…</div>
+                    <div className="flex flex-col items-center justify-center h-full py-4 text-center px-4">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                            <span className="text-[9px] font-bold tracking-wider text-green-500 uppercase">CAMERA ONLINE</span>
+                        </div>
+                        <span className="text-[12px] font-bold text-[var(--text-secondary)] mb-0.5">NO VEHICLES DETECTED</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">Camera is online and scanning for vehicles</span>
+                    </div>
                 )}
             </div>
         </div>
