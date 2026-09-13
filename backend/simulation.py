@@ -8,24 +8,33 @@ from typing import List, Dict, Optional
 from models import Camera, Vehicle, DetectionEvent, Alert, Trajectory, TrajectoryNode, SystemState, MatchResult
 
 CAMERAS = [
-    Camera(id="CAM-01", name="Connaught Place", location="Central Delhi", lat=28.6304, lng=77.2177),
-    Camera(id="CAM-02", name="ITO", location="East Delhi", lat=28.6271, lng=77.2415),
-    Camera(id="CAM-03", name="India Gate", location="Central Delhi", lat=28.6129, lng=77.2295),
-    Camera(id="CAM-04", name="Ring Road", location="South Delhi", lat=28.5830, lng=77.2486),
-    Camera(id="CAM-05", name="Kashmere Gate", location="North Delhi", lat=28.6679, lng=77.2289),
-    Camera(id="CAM-06", name="AIIMS Junction", location="South Delhi", lat=28.5670, lng=77.2069),
+    Camera(id="CAM-01", name="Connaught Place",    location="Central Delhi",  lat=28.6304, lng=77.2177),
+    Camera(id="CAM-02", name="ITO",                location="East Delhi",     lat=28.6271, lng=77.2415),
+    Camera(id="CAM-03", name="India Gate",          location="Central Delhi",  lat=28.6129, lng=77.2295),
+    Camera(id="CAM-04", name="Ring Road",           location="South Delhi",    lat=28.5830, lng=77.2486),
+    Camera(id="CAM-05", name="Kashmere Gate",       location="North Delhi",    lat=28.6679, lng=77.2289),
+    Camera(id="CAM-06", name="AIIMS Junction",      location="South Delhi",    lat=28.5670, lng=77.2069),
+    Camera(id="CAM-07", name="Nehru Place",         location="South Delhi",    lat=28.5477, lng=77.2520),
+    Camera(id="CAM-08", name="Dhaula Kuan",         location="West Delhi",     lat=28.5918, lng=77.1670),
+    Camera(id="CAM-09", name="Lajpat Nagar",        location="South Delhi",    lat=28.5700, lng=77.2440),
+    Camera(id="CAM-10", name="Rajouri Garden",      location="West Delhi",     lat=28.6480, lng=77.1218),
+    Camera(id="CAM-11", name="Saket Metro",         location="South Delhi",    lat=28.5244, lng=77.2085),
+    Camera(id="CAM-12", name="Akshardham Bridge",   location="East Delhi",     lat=28.6127, lng=77.2773),
 ]
 
 VEHICLES = [
-    Vehicle(id="V-101", plate="DL01AB1234", type="Sedan", color="White"),
-    Vehicle(id="V-102", plate="DL03CD4567", type="SUV", color="Black"),
-    Vehicle(id="V-103", plate="HR26EF7890", type="Hatchback", color="Red"),
-    Vehicle(id="V-104", plate="DL08GH2468", type="Sedan", color="Blue"),
-    Vehicle(id="V-105", plate="DL05JK1357", type="SUV", color="Silver"),
-    Vehicle(id="V-106", plate="UP16MN8901", type="Truck", color="Yellow"),
-    Vehicle(id="V-107", plate="DL10XY5678", type="Hatchback", color="White"),
-    Vehicle(id="V-108", plate="HR29KL3456", type="Sedan", color="Black"),
+    Vehicle(id="V-101", plate="DL01AB1234", type="Sedan",      color="White"),
+    Vehicle(id="V-102", plate="DL03CD4567", type="SUV",        color="Black"),
+    Vehicle(id="V-103", plate="HR26EF7890", type="Hatchback",  color="Red"),
+    Vehicle(id="V-104", plate="DL08GH2468", type="Sedan",      color="Blue"),
+    Vehicle(id="V-105", plate="DL05JK1357", type="SUV",        color="Silver"),
+    Vehicle(id="V-106", plate="UP16MN8901", type="Truck",      color="Yellow"),
+    Vehicle(id="V-107", plate="DL10XY5678", type="Hatchback",  color="White"),
+    Vehicle(id="V-108", plate="HR29KL3456", type="Sedan",      color="Black"),
     Vehicle(id="V-109", plate="DL04QW1234", type="Motorcycle", color="Red"),
+    Vehicle(id="V-110", plate="DL07RS9012", type="SUV",        color="Blue"),
+    Vehicle(id="V-111", plate="UP32TU3456", type="Sedan",      color="Silver"),
+    Vehicle(id="V-112", plate="HR55VW7890", type="Hatchback",  color="White"),
 ]
 
 # Predefined routes with approximate time offsets (in seconds) between points
@@ -55,8 +64,47 @@ ROUTES = {
         {"cam": "CAM-05", "offset": 5},
         {"cam": "CAM-03", "offset": 40},
         {"cam": "CAM-04", "offset": 80},
-    ]
+    ],
+    "V-106": [
+        {"cam": "CAM-08", "offset": 10},
+        {"cam": "CAM-10", "offset": 55},
+        {"cam": "CAM-01", "offset": 100},
+    ],
+    "V-107": [
+        {"cam": "CAM-12", "offset": 8},
+        {"cam": "CAM-02", "offset": 45},
+        {"cam": "CAM-09", "offset": 90},
+        {"cam": "CAM-07", "offset": 135},
+    ],
+    "V-108": [
+        {"cam": "CAM-11", "offset": 12},
+        {"cam": "CAM-06", "offset": 50},
+        {"cam": "CAM-09", "offset": 95},
+    ],
+    "V-109": [
+        {"cam": "CAM-10", "offset": 20},
+        {"cam": "CAM-08", "offset": 60},
+        {"cam": "CAM-03", "offset": 110},
+    ],
+    "V-110": [
+        {"cam": "CAM-07", "offset": 15},
+        {"cam": "CAM-11", "offset": 55},
+        {"cam": "CAM-06", "offset": 100},
+        {"cam": "CAM-04", "offset": 150},
+    ],
+    "V-111": [
+        {"cam": "CAM-05", "offset": 25},
+        {"cam": "CAM-01", "offset": 65},
+        {"cam": "CAM-08", "offset": 115},
+        {"cam": "CAM-10", "offset": 160},
+    ],
+    "V-112": [
+        {"cam": "CAM-03", "offset": 18},
+        {"cam": "CAM-12", "offset": 55},
+        {"cam": "CAM-02", "offset": 90},
+    ],
 }
+
 
 class TrafficSimulator:
     def __init__(self):

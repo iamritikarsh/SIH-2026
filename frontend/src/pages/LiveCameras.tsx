@@ -4,15 +4,21 @@ import type { Camera, DetectionEvent } from '../types';
 import { api } from '../services/api';
 import { Video, ExternalLink } from 'lucide-react';
 
-// High-quality local traffic-scene images per camera
-const CAM_IMAGES = [
-    '/cameras/cam-01.jpg', // Connaught Place (intersection/traffic)
-    '/cameras/cam-02.jpg', // ITO (heavy traffic/vehicles)
-    '/cameras/cam-03.jpg', // India Gate (highway/cars)
-    '/cameras/cam-04.jpg', // Ring Road (flyover/traffic)
-    '/cameras/cam-05.jpg', // Kashmere Gate (buses/city traffic)
-    '/cameras/cam-06.jpg', // AIIMS Junction (dense traffic)
-];
+// Traffic-scene images per camera — keyed by camera ID for dynamic lookup
+const CAM_IMAGES: Record<string, string> = {
+    'CAM-01': '/cameras/cam-01.jpg', // Connaught Place
+    'CAM-02': '/cameras/cam-02.jpg', // ITO
+    'CAM-03': '/cameras/cam-03.jpg', // India Gate
+    'CAM-04': '/cameras/cam-04.jpg', // Ring Road
+    'CAM-05': '/cameras/cam-05.jpg', // Kashmere Gate
+    'CAM-06': '/cameras/cam-06.jpg', // AIIMS Junction
+    'CAM-07': '/cameras/cam-07.jpg', // Nehru Place
+    'CAM-08': '/cameras/cam-08.jpg', // Dhaula Kuan
+    'CAM-09': '/cameras/cam-09.jpg', // Lajpat Nagar
+    'CAM-10': '/cameras/cam-10.jpg', // Rajouri Garden
+    'CAM-11': '/cameras/cam-11.jpg', // Saket Metro
+    'CAM-12': '/cameras/cam-12.jpg', // Akshardham Bridge
+};
 
 const VEH_COLORS: Record<string, string> = {
     White: '#e2e8f0', Black: '#1e293b', Red: '#ef4444',
@@ -42,7 +48,7 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
 
                 {/* Background traffic image */}
                 <img
-                    src={CAM_IMAGES[index % CAM_IMAGES.length]}
+                    src={CAM_IMAGES[cam.id] || '/cameras/cam-01.jpg'}
                     alt=""
                     onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=640&q=70&auto=format&fit=crop'; }}
                     className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500"
@@ -163,7 +169,7 @@ export default function LiveCameras() {
                 <div>
                     <div className="label-xs text-blue-400 mb-2">SURVEILLANCE GRID</div>
                     <h2 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">Live Camera Feeds</h2>
-                    <p className="text-[var(--text-secondary)] text-sm mt-1">6 nodes active — click any detection to begin tracking</p>
+                    <p className="text-[var(--text-secondary)] text-sm mt-1">{cameras.length} nodes active — click any detection to begin tracking</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="status-online">All Cameras Online</span>
