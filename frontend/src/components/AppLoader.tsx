@@ -5,13 +5,13 @@ import React, { useEffect, useState } from 'react';
    a minimum % progress to show before it completes.
    ───────────────────────────────────────────────────────────── */
 const STEPS = [
-  { label: 'Connecting to camera network…',   ms: 600  },
-  { label: 'Loading vehicle tracking module…', ms: 600  },
-  { label: 'Initializing ANPR engine…',        ms: 550  },
-  { label: 'Synchronizing traffic data…',      ms: 500  },
-  { label: 'Preparing analytics pipeline…',    ms: 500  },
-  { label: 'Calibrating cross-camera match…',  ms: 450  },
-  { label: 'SYSTEM READY',                     ms: 300  },
+  { label: 'Connecting to camera network…',    ms: 250 },
+  { label: 'Loading vehicle tracking module…', ms: 250 },
+  { label: 'Initializing ANPR engine…',        ms: 250 },
+  { label: 'Synchronizing traffic data…',      ms: 250 },
+  { label: 'Preparing analytics pipeline…',    ms: 250 },
+  { label: 'Calibrating cross-camera match…',  ms: 250 },
+  { label: 'SYSTEM READY',                     ms: 200 },
 ];
 
 const TOTAL_MS = STEPS.reduce((s, x) => s + x.ms, 0);
