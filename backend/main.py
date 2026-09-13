@@ -30,6 +30,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "SIH Traffic Intelligence Engine API is running"}
+
 @app.get("/api/cameras", response_model=List[Camera])
 async def get_cameras():
     return CAMERAS
