@@ -25,14 +25,20 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/")
-async def root():
-    return {"status": "ok", "message": "SIH Traffic Intelligence Engine API is running"}
+@app.get("/health")
+@app.get("/api/health")
+async def health_check():
+    return {
+        "status": "ok",
+        "service": "city-traffic-engine",
+        "version": "1.0.0"
+    }
 
 @app.get("/api/cameras", response_model=List[Camera])
 async def get_cameras():
