@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import {
-    LayoutDashboard, Video, Map, BarChart3, Bell, Search, Settings,
+    LayoutDashboard, Video, Map, MapPin, BarChart3, Bell, Search, Settings,
     Activity, ChevronRight, AlertTriangle
 } from 'lucide-react';
 import { api } from './services/api';
@@ -12,6 +12,7 @@ import VehicleTracking from './pages/VehicleTracking';
 import Dashboard from './pages/Dashboard';
 import TrafficAnalytics from './pages/TrafficAnalytics';
 import SystemAlerts from './pages/SystemAlerts';
+import TrafficMap from './pages/TrafficMap';
 import AppLoader from './components/AppLoader';
 
 /* ── Sidebar ────────────────────────────────────────────── */
@@ -20,6 +21,7 @@ function Sidebar({ state }: { state: SystemState | null }) {
         { path: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
         { path: '/cameras', label: 'Live Cameras', icon: Video },
         { path: '/tracking', label: 'Vehicle Tracking', icon: Map },
+        { path: '/traffic-map', label: 'Traffic Map', icon: MapPin },
         { path: '/analytics', label: 'Traffic Analytics', icon: BarChart3 },
         { path: '/alerts', label: 'Alerts', icon: Bell },
     ];
@@ -68,7 +70,7 @@ function Sidebar({ state }: { state: SystemState | null }) {
                     </span>
                     {state && (
                         <span className="mono text-[10px] text-[var(--text-muted)] bg-[var(--bg-card)] px-2 py-0.5 rounded">
-                            {state.simulation_speed}×
+                            {state.simulation_speed}Ã—
                         </span>
                     )}
                 </div>
@@ -77,7 +79,7 @@ function Sidebar({ state }: { state: SystemState | null }) {
     );
 }
 
-/* ── Topbar ─────────────────────────────────────────────── */
+/* â”€â”€ Topbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 'CONNECTING' | 'ONLINE' | 'OFFLINE' }) {
     const [search, setSearch] = useState('');
     const location = useLocation();
@@ -145,10 +147,18 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={14} />
                 <input
                     type="text"
-                    placeholder="Search vehicle ID or plate…"
+                    placeholder="Search vehicle ID or plateâ€¦"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') window.location.href = `/tracking?q=${search}`; }}
+                    onKeyDown={e => { 
+                        if (e.key === 'Enter') {
+                            if (location.pathname === '/traffic-map') {
+                                window.location.href = `/traffic-map?q=${search}`;
+                            } else {
+                                window.location.href = `/tracking?q=${search}`;
+                            }
+                        }
+                    }}
                     className="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[13px] rounded pl-8 pr-4 py-1.5 focus:outline-none focus:border-[var(--blue)] w-64 text-[var(--text-primary)] placeholder-[var(--text-muted)] transition-colors"
                 />
             </div>
@@ -160,7 +170,7 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
     );
 }
 
-/* ── App ─────────────────────────────────────────────────── */
+/* â”€â”€ App â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 export default function App() {
     const [state, setState] = useState<SystemState | null>(null);
     const [connStatus, setConnStatus] = useState<'CONNECTING' | 'ONLINE' | 'OFFLINE'>('CONNECTING');
@@ -217,6 +227,7 @@ export default function App() {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/cameras" element={<LiveCameras />} />
                             <Route path="/tracking" element={<VehicleTracking />} />
+                            <Route path="/traffic-map" element={<TrafficMap />} />
                             <Route path="/analytics" element={<TrafficAnalytics />} />
                             <Route path="/alerts" element={<SystemAlerts />} />
                         </Routes>
