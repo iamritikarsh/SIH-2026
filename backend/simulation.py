@@ -273,14 +273,15 @@ class TrafficSimulator:
                     self.trajectories[v_id].path = []
                     
         # 2. Continuous background traffic for ALL cameras so they are never "0 detections" for long
+        # Precompute free vehicles once to save CPU during massive camera ticks
+        if not hasattr(self, '_free_vehicles'):
+            self._free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
+            if not self._free_vehicles:
+                self._free_vehicles = VEHICLES
+                
         for cam_id, next_time in list(self.cam_next_random.items()):
             if next_time <= self.current_sim_time:
-                # Pick a random vehicle that IS NOT currently on a strict route
-                free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
-                if not free_vehicles:
-                    free_vehicles = VEHICLES # fallback
-                    
-                v = random.choice(free_vehicles)
+                v = random.choice(self._free_vehicles)
                 self._trigger_detection(v.id, cam_id, next_time)
                 
                 # Schedule next random vehicle for this camera (dense traffic = short delay)
@@ -289,7 +290,9 @@ class TrafficSimulator:
                 self.cam_next_random[cam_id] = next_time + timedelta(seconds=delay)
             
     def _trigger_detection(self, v_id: str, cam_id: str, ts: datetime):
-        v = next((v for v in VEHICLES if v.id == v_id), None)
+        if not hasattr(self, '_vehicle_dict'):
+            self._vehicle_dict = {v.id: v for v in VEHICLES}
+        v = self._vehicle_dict.get(v_id)
         if not v:
             return
             
@@ -351,7 +354,9 @@ class TrafficSimulator:
             if len(self.events) > 0:
                 # Pick a camera that we know is currently active
                 active_cam_id = random.choice(self.events[:100]).camera_id
-                cam = next((c for c in CAMERAS if c.id == active_cam_id), None)
+                if not hasattr(self, '_camera_dict'):
+                    self._camera_dict = {c.id: c for c in CAMERAS}
+                cam = self._camera_dict.get(active_cam_id)
                 if cam:
                     recent_cam_events = [e for e in self.events[:400] if e.camera_id == cam.id]
                     if len(recent_cam_events) > 2:
