@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MapContainer, TileLayer, Circle, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, CircleMarker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { api } from '../services/api';
 import type { Camera, DetectionEvent, SystemState, Alert, Trajectory } from '../types';
@@ -201,7 +201,12 @@ export default function TrafficMap() {
                                         radius={cam.status === 'HEAVY' ? 700 : cam.status === 'MODERATE' ? 500 : 350} 
                                         dim={dim}
                                     />
-                                    <Marker position={[cam.lat, cam.lng]} icon={createCamIcon(dim ? '#94a3b8' : color)} eventHandlers={{ click: () => setSelectedCam(cam.id) }}>
+                                    <CircleMarker 
+                                        center={[cam.lat, cam.lng]} 
+                                        radius={6} 
+                                        pathOptions={{ color: 'white', weight: 2, fillColor: dim ? '#94a3b8' : color, fillOpacity: 1 }} 
+                                        eventHandlers={{ click: () => setSelectedCam(cam.id) }}
+                                    >
                                         <Popup className="custom-traffic-popup" closeButton={false}>
                                             <div className="p-1 min-w-[200px]">
                                                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
@@ -244,7 +249,7 @@ export default function TrafficMap() {
                                                 )}
                                             </div>
                                         </Popup>
-                                    </Marker>
+                                    </CircleMarker>
                                 </React.Fragment>
                             );
                     })}

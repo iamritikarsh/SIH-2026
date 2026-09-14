@@ -183,6 +183,8 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
 export default function LiveCameras() {
     const [cameras, setCameras] = useState<Camera[]>([]);
     const [events, setEvents] = useState<DetectionEvent[]>([]);
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 24;
 
     useEffect(() => { api.getCameras().then(setCameras); }, []);
 
@@ -206,9 +208,31 @@ export default function LiveCameras() {
                 </div>
             </div>
 
+            <div className="flex items-center justify-between mb-4">
+                <div className="text-[13px] text-[var(--text-secondary)]">
+                    Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, cameras.length)} of {cameras.length} cameras
+                </div>
+                <div className="flex gap-2">
+                    <button 
+                        disabled={page === 1} 
+                        onClick={() => setPage(p => p - 1)} 
+                        className="px-3 py-1 bg-[var(--bg-card)] border border-[var(--border)] rounded text-[12px] font-medium disabled:opacity-50 hover:bg-[var(--bg-base)]"
+                    >
+                        Previous
+                    </button>
+                    <button 
+                        disabled={page * ITEMS_PER_PAGE >= cameras.length} 
+                        onClick={() => setPage(p => p + 1)} 
+                        className="px-3 py-1 bg-[var(--bg-card)] border border-[var(--border)] rounded text-[12px] font-medium disabled:opacity-50 hover:bg-[var(--bg-base)]"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {cameras.map((cam, i) => (
-                    <CamFeed key={cam.id} cam={cam} index={i} events={events} />
+                {cameras.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((cam, i) => (
+                    <CamFeed key={cam.id} cam={cam} index={(page - 1) * ITEMS_PER_PAGE + i} events={events} />
                 ))}
             </div>
         </div>

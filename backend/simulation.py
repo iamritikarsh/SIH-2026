@@ -22,20 +22,50 @@ CAMERAS = [
     Camera(id="CAM-12", name="Akshardham Bridge",   location="East Delhi",     lat=28.6127, lng=77.2773),
 ]
 
-# Generate additional cameras to reach 1000 total live cameras across Delhi NCR
+# Generate additional cameras to reach 10000 total live cameras across Delhi NCR
 _zones = ["North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"]
-for i in range(13, 1001):
+for i in range(13, 10001):
     # Delhi bounds approx: Lat 28.40 to 28.88, Lng 76.84 to 77.34
     _lat = round(random.uniform(28.40, 28.88), 4)
     _lng = round(random.uniform(76.84, 77.34), 4)
-    _zone = random.choice(_zones)
     CAMERAS.append(Camera(
-        id=f"CAM-{i:03d}",
-        name=f"CCTV-{i:03d} {_zone}",
-        location=_zone,
-        lat=_lat,
-        lng=_lng
+        id=f"CAM-{i}",
+        name=f"Zone {random.randint(1, 100)} Node",
+        location=random.choice(_zones),
+        lat=_lat, lng=_lng
     ))
+
+# Predefined routes with approximate time offsets (in seconds) between points
+ROUTES = {
+    # Speeding vehicle route
+    "V-7433": [
+        {"cam": "CAM-736", "offset": 0},
+        {"cam": "CAM-983", "offset": 5},
+        {"cam": "CAM-1024", "offset": 10},
+    ],
+    # Wanted vehicle route
+    "V-7672": [
+        {"cam": "CAM-054", "offset": 0},
+        {"cam": "CAM-902", "offset": 20},
+        {"cam": "CAM-334", "offset": 45},
+        {"cam": "CAM-812", "offset": 70},
+    ],
+    # Suspicious loitering vehicle
+    "V-4468": [
+        {"cam": "CAM-560", "offset": 0},
+        {"cam": "CAM-926", "offset": 30},
+        {"cam": "CAM-111", "offset": 60},
+        {"cam": "CAM-560", "offset": 90}, 
+    ],
+    # VIP Convoy (multiple vehicles, same route)
+    "V-6004": [{"cam": "CAM-559", "offset": 0}, {"cam": "CAM-908", "offset": 15}, {"cam": "CAM-772", "offset": 30}],
+    "V-6005": [{"cam": "CAM-559", "offset": 1}, {"cam": "CAM-908", "offset": 16}, {"cam": "CAM-772", "offset": 31}],
+}
+
+# Generate 20000 background vehicles so random traffic across 10000 cameras doesn't cause teleportation
+_types = ["Sedan", "SUV", "Hatchback", "Truck", "Motorcycle", "Van", "Bus"]
+_colors = ["White", "Black", "Silver", "Grey", "Red", "Blue", "Yellow", "Green"]
+_states = ["DL", "HR", "UP", "CH", "PB", "RJ"]
 
 VEHICLES = [
     Vehicle(id="V-101", plate="DL01AB1234", type="Sedan",      color="White"),
