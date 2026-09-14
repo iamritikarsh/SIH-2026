@@ -484,7 +484,7 @@ export default function VehicleJourneyReplay() {
                         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4">Recent Demo Vehicles</h3>
                             <div className="grid grid-cols-2 gap-3">
-                                {['DL01AB1234', 'HR26EF7890', 'DL03CD4567', 'UP14YZ5678'].map(v => (
+                                {['DL01AB1234', 'HR26EF7890', 'DL03CD4567', 'UP16MN8901'].map(v => (
                                     <button key={v} onClick={() => { setSearchInput(v); navigate(`/replay?vehicle=${v}`); }}
                                         className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-colors group">
                                         <div className="flex items-center gap-2">
