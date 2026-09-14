@@ -28,7 +28,7 @@ const VEH_COLORS: Record<string, string> = {
 function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: DetectionEvent[] }) {
     const navigate = useNavigate();
     // Use the newest event in the system to determine "current simulation time"
-    const systemLatestTime = events.length > 0 ? new Date(events[0].timestamp).getTime() : Date.now();
+    const systemLatestTime = events.length > 0 ? Math.max(...events.map(e => new Date(e.timestamp).getTime())) : Date.now();
     
     // A vehicle is considered "in frame" for 8 seconds
     const activeEvents = events.filter(e => 
