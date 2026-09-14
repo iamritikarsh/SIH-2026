@@ -22,6 +22,21 @@ CAMERAS = [
     Camera(id="CAM-12", name="Akshardham Bridge",   location="East Delhi",     lat=28.6127, lng=77.2773),
 ]
 
+# Generate additional cameras to reach 1000 total live cameras across Delhi NCR
+_zones = ["North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"]
+for i in range(13, 1001):
+    # Delhi bounds approx: Lat 28.40 to 28.88, Lng 76.84 to 77.34
+    _lat = round(random.uniform(28.40, 28.88), 4)
+    _lng = round(random.uniform(76.84, 77.34), 4)
+    _zone = random.choice(_zones)
+    CAMERAS.append(Camera(
+        id=f"CAM-{i:03d}",
+        name=f"CCTV-{i:03d} {_zone}",
+        location=_zone,
+        lat=_lat,
+        lng=_lng
+    ))
+
 VEHICLES = [
     Vehicle(id="V-101", plate="DL01AB1234", type="Sedan",      color="White"),
     Vehicle(id="V-102", plate="DL03CD4567", type="SUV",        color="Black"),
@@ -38,6 +53,21 @@ VEHICLES = [
 ]
 
 # Predefined routes with approximate time offsets (in seconds) between points
+
+# Generate 10000 background vehicles so random traffic across 1000 cameras doesn't cause teleportation
+_types = ["Sedan", "SUV", "Hatchback", "Truck", "Motorcycle", "Van", "Bus"]
+_colors = ["White", "Black", "Silver", "Grey", "Red", "Blue", "Yellow", "Green"]
+_states = ["DL", "HR", "UP", "CH", "PB", "RJ"]
+
+for i in range(113, 10113):
+    _plate = f"{random.choice(_states)}{random.randint(10,99)}{random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')}{random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')}{random.randint(1000,9999)}"
+    VEHICLES.append(Vehicle(
+        id=f"V-{i}",
+        plate=_plate,
+        type=random.choice(_types),
+        color=random.choice(_colors)
+    ))
+
 ROUTES = {
     "V-101": [
         {"cam": "CAM-01", "offset": 10},
@@ -151,14 +181,14 @@ class TrafficSimulator:
         }
         
         # Inject an initial snapshot so no camera is empty at load
+        free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
         for cam in CAMERAS:
             num_vehicles = random.randint(1, 3)
-            free_vehicles = [v for v in VEHICLES if v.id not in ROUTES]
-            random.shuffle(free_vehicles)
-            for i in range(min(num_vehicles, len(free_vehicles))):
+            sampled = random.sample(free_vehicles, min(num_vehicles, len(free_vehicles)))
+            for v in sampled:
                 # Spread timestamps slightly backwards so they look like they just happened
                 ts = self.start_sim_time - timedelta(seconds=random.uniform(0, 4))
-                self._trigger_detection(free_vehicles[i].id, cam.id, ts)
+                self._trigger_detection(v.id, cam.id, ts)
         
     def start(self):
         if not self.is_simulating:
@@ -288,19 +318,23 @@ class TrafficSimulator:
         now_ts = self.current_sim_time.timestamp()
         
         if random.random() < 0.05 * self.simulation_speed: 
-            cam = random.choice(CAMERAS)
-            recent_cam_events = [e for e in self.events[:100] if e.camera_id == cam.id]
-            if len(recent_cam_events) > 8:
-                avg_speed = sum(e.speed for e in recent_cam_events) / len(recent_cam_events)
-                if avg_speed < 40:
-                    self.alerts.insert(0, Alert(
-                        id=f"al-{uuid.uuid4().hex[:8]}",
-                        type="CONGESTION",
-                        title="HIGH CONGESTION",
-                        message=f"{cam.name} traffic volume increased. Avg speed: {round(avg_speed)} km/h",
-                        timestamp=self.current_sim_time.isoformat(),
-                        reference_id=cam.id
-                    ))
+            if len(self.events) > 0:
+                # Pick a camera that we know is currently active
+                active_cam_id = random.choice(self.events[:100]).camera_id
+                cam = next((c for c in CAMERAS if c.id == active_cam_id), None)
+                if cam:
+                    recent_cam_events = [e for e in self.events[:400] if e.camera_id == cam.id]
+                    if len(recent_cam_events) > 2:
+                        avg_speed = sum(e.speed for e in recent_cam_events) / len(recent_cam_events)
+                        if avg_speed < 40:
+                            self.alerts.insert(0, Alert(
+                                id=f"al-{uuid.uuid4().hex[:8]}",
+                                type="CONGESTION",
+                                title="HIGH CONGESTION",
+                                message=f"{cam.name} traffic volume increased. Avg speed: {round(avg_speed)} km/h",
+                                timestamp=self.current_sim_time.isoformat(),
+                                reference_id=cam.id
+                            ))
             
         if len(self.alerts) > 500:
             self.alerts = self.alerts[:500]

@@ -31,7 +31,7 @@ export default function Dashboard() {
     const metrics = [
         { label: 'Vehicles Detected', value: state?.total_vehicles_detected ?? 0, icon: Car, color: 'text-[var(--blue)]', accent: 'bg-blue-500/8' },
         { label: 'Active Tracks', value: state?.active_vehicles_count ?? 0, icon: Activity, color: 'text-green-600', accent: 'bg-green-500/8' },
-        { label: 'Cameras Online', value: '12 / 12', icon: Video, color: 'text-sky-400', accent: 'bg-sky-500/8' },
+        { label: 'Cameras Online', value: '1000 / 1000', icon: Video, color: 'text-sky-400', accent: 'bg-sky-500/8' },
         { label: 'Avg Speed', value: '44 km/h', icon: Gauge, color: 'text-amber-600', accent: 'bg-amber-500/8' },
     ];
 
@@ -55,10 +55,10 @@ export default function Dashboard() {
                         <p className="text-[var(--text-secondary)] text-sm max-w-xl">
                             Multi-camera ANPR vehicle tracking &amp; cross-camera trajectory reconstruction across the city grid.
                         </p>
-                        <div className="flex items-center gap-5 mt-5">
-                            <span className="status-online">System Online</span>
-                            <span className="status-sim">Simulation Active</span>
-                            <span className="label-xs">12 Nodes Monitored</span>
+                        <div className="flex items-center gap-3 mt-4 text-[var(--text-secondary)]">
+                            <span className="status-online">SYSTEM ONLINE</span>
+                            <span className="status-sim">SIMULATION ACTIVE</span>
+                            <span className="label-xs">1000 Nodes Monitored</span>
                         </div>
                     </div>
                     <button
