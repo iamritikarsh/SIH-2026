@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="docs/assets/sih-logo.png" alt="Smart India Hackathon Logo" width="350" />
+  <img src="docs/assets/sih-logo-clean.png" alt="Smart India Hackathon Logo" width="160" />
   
   <br />
-  <br />
+  <h2 style="color: #64748b; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Smart India Hackathon 2026</h2>
 
   <h1>🚦 City-Wide AI Traffic Intelligence Engine</h1>
   <p>
