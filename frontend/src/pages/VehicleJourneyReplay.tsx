@@ -15,16 +15,35 @@ L.Icon.Default.mergeOptions({
     shadowUrl:     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+/* Premium animated vehicle marker */
 const vehicleIcon = L.divIcon({
     className: '',
-    html: `<div style="width:20px;height:20px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 0 14px #3b82f6;font-size:11px;display:flex;align-items:center;justify-content:center;">🚗</div>`,
-    iconSize: [24, 24], iconAnchor: [12, 12],
+    html: `
+    <div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+      <div style="position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(59,130,246,0.15);animation:vehiclePulse 1.6s ease-out infinite;"></div>
+      <div style="position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(59,130,246,0.2);animation:vehiclePulse 1.6s ease-out 0.4s infinite;"></div>
+      <div style="position:relative;z-index:2;width:20px;height:20px;background:linear-gradient(135deg,#60a5fa,#2563eb);border:2.5px solid white;border-radius:50%;box-shadow:0 0 14px rgba(59,130,246,0.95),0 2px 8px rgba(0,0,0,0.35);"></div>
+    </div>`,
+    iconSize: [40, 40], iconAnchor: [20, 20],
 });
 
-const camIcon = (active: boolean) => L.divIcon({
+/* Premium numbered camera markers */
+const camIcon = (active: boolean, label: number, isPassed: boolean) => L.divIcon({
     className: '',
-    html: `<div style="width:14px;height:14px;background:${active ? '#3b82f6' : '#94a3b8'};border:2px solid white;border-radius:50%;box-shadow:0 0 8px ${active ? '#3b82f6' : 'transparent'};"></div>`,
-    iconSize: [14, 14], iconAnchor: [7, 7],
+    html: `
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;width:32px;height:32px;">
+      ${active ? `<div style="position:absolute;width:32px;height:32px;border-radius:50%;border:2px solid rgba(59,130,246,0.5);animation:camPing 1.4s ease-out infinite;"></div>` : ''}
+      <div style="position:relative;z-index:1;width:${active ? 24 : 20}px;height:${active ? 24 : 20}px;
+        background:${active ? 'linear-gradient(135deg,#3b82f6,#1d4ed8)' : isPassed ? 'linear-gradient(135deg,#475569,#334155)' : 'rgba(30,41,59,0.85)'};
+        border:2px solid ${active ? 'white' : isPassed ? 'rgba(148,163,184,0.6)' : 'rgba(148,163,184,0.3)'};
+        border-radius:50%;
+        box-shadow:${active ? '0 0 16px rgba(59,130,246,0.85),0 2px 8px rgba(0,0,0,0.4)' : isPassed ? '0 1px 4px rgba(0,0,0,0.3)' : 'none'};
+        display:flex;align-items:center;justify-content:center;
+        color:white;font-size:9px;font-weight:800;font-family:monospace;">
+        ${label}
+      </div>
+    </div>`,
+    iconSize: [32, 32], iconAnchor: [16, 16],
 });
 
 /* ── Haversine distance (km) ── */
@@ -283,37 +302,55 @@ export default function VehicleJourneyReplay() {
                                     zoomControl={false}
                                 >
                                     <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                                        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                                     />
+
+                                    {/* Inject CSS keyframes into the map DOM */}
+                                    <style>{`
+                                        @keyframes vehiclePulse {
+                                            0%   { transform: scale(0.5); opacity: 0.9; }
+                                            100% { transform: scale(1.8); opacity: 0; }
+                                        }
+                                        @keyframes camPing {
+                                            0%   { transform: scale(0.8); opacity: 1; }
+                                            100% { transform: scale(1.8); opacity: 0; }
+                                        }
+                                    `}</style>
 
                                     {/* Fit map to route once coords are available */}
                                     {journey.pathCoords.length >= 2 && (
                                         <FitBoundsOnLoad coords={journey.pathCoords} />
                                     )}
 
-                                    {/* Dashed full route */}
+                                    {/* Ghost route — very subtle dotted background */}
                                     <Polyline
                                         positions={journey.pathCoords}
-                                        pathOptions={{ color: '#cbd5e1', weight: 4, opacity: 0.8, dashArray: '10, 10' }}
+                                        pathOptions={{ color: '#334155', weight: 6, opacity: 0.9, dashArray: '2, 14', lineCap: 'round', lineJoin: 'round' }}
                                     />
 
-                                    {/* Solid blue progress line */}
+                                    {/* Completed route glow layer — deep blue shadow */}
                                     {animState && animState.currentIdx > 0 && (
                                         <Polyline
-                                            positions={[
-                                                ...journey.pathCoords.slice(0, animState.currentIdx),
-                                                animState.pos,
-                                            ]}
-                                            pathOptions={{ color: '#3b82f6', weight: 6, opacity: 0.9, lineCap: 'round' }}
+                                            positions={[...journey.pathCoords.slice(0, animState.currentIdx), animState.pos]}
+                                            pathOptions={{ color: '#1d4ed8', weight: 14, opacity: 0.25, lineCap: 'round', lineJoin: 'round' }}
                                         />
                                     )}
 
-                                    {/* Camera markers */}
+                                    {/* Completed route solid core */}
+                                    {animState && animState.currentIdx > 0 && (
+                                        <Polyline
+                                            positions={[...journey.pathCoords.slice(0, animState.currentIdx), animState.pos]}
+                                            pathOptions={{ color: '#60a5fa', weight: 5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' }}
+                                        />
+                                    )}
+
+                                    {/* Camera markers — numbered, active/passed/pending */}
                                     {journey.nodes.map((n, i) => {
-                                        const active = animState ? i <= animState.currentIdx : false;
+                                        const active   = animState ? animState.currentIdx === i : false;
+                                        const isPassed = animState ? animState.currentIdx > i  : false;
                                         return (
-                                            <Marker key={i} position={[n.cam.lat, n.cam.lng]} icon={camIcon(active)}>
+                                            <Marker key={i} position={[n.cam.lat, n.cam.lng]} icon={camIcon(active, i + 1, isPassed)}>
                                                 <Popup closeButton={false}>
                                                     <div className="p-1 min-w-[160px]">
                                                         <div className="font-mono text-[9px] text-slate-500 font-bold">{n.cam.id}</div>
@@ -328,7 +365,7 @@ export default function VehicleJourneyReplay() {
                                         );
                                     })}
 
-                                    {/* Animated vehicle marker — position derived from state, no ref needed */}
+                                    {/* Animated vehicle marker */}
                                     {animState && (
                                         <Marker position={animState.pos} icon={vehicleIcon} zIndexOffset={1000} />
                                     )}
@@ -363,23 +400,26 @@ export default function VehicleJourneyReplay() {
 
                             {/* Current location panel */}
                             {animState && !hasFinished && (
-                                <div className="absolute top-4 left-4 z-[400] bg-white/95 backdrop-blur-md p-4 rounded-xl border border-slate-200 shadow-xl w-56 pointer-events-none">
-                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Current Location</span>
+                                <div className="absolute top-4 left-4 z-[400] bg-[#0f172a]/95 backdrop-blur-md p-4 rounded-xl border border-blue-900/40 shadow-2xl w-60 pointer-events-none">
+                                    <span className="text-[9px] font-bold text-blue-400/70 uppercase tracking-[0.2em] block mb-2 flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse inline-block"></span>
+                                        VEHICLE TRACKING
+                                    </span>
                                     <div className="flex items-start gap-2 mb-3">
-                                        <div className="w-7 h-7 rounded bg-blue-100 flex items-center justify-center text-blue-600 shrink-0"><MapPin size={14} /></div>
+                                        <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0"><MapPin size={13} /></div>
                                         <div>
-                                            <div className="text-[10px] font-mono font-bold text-slate-500">{journey.nodes[animState.currentIdx]?.cam.id}</div>
-                                            <div className="text-[13px] font-bold text-slate-800 leading-tight">{journey.nodes[animState.currentIdx]?.cam.name}</div>
+                                            <div className="text-[10px] font-mono font-bold text-blue-400/60">{journey.nodes[animState.currentIdx]?.cam.id}</div>
+                                            <div className="text-[13px] font-bold text-white leading-tight">{journey.nodes[animState.currentIdx]?.cam.name}</div>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                                         <div>
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Speed</span>
-                                            <span className="text-[12px] font-mono font-bold text-amber-600">{journey.nodes[animState.currentIdx]?.event.speed} km/h</span>
+                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Speed</span>
+                                            <span className="text-[14px] font-mono font-bold text-amber-400">{journey.nodes[animState.currentIdx]?.event.speed}<span className="text-[9px] text-slate-500 ml-0.5">km/h</span></span>
                                         </div>
                                         <div>
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Status</span>
-                                            <span className="text-[10px] font-bold text-green-600 flex items-center gap-0.5">
+                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Status</span>
+                                            <span className="text-[10px] font-bold text-green-400 flex items-center gap-0.5">
                                                 <CheckCircle size={10} /> {animState.currentIdx === 0 ? 'DETECTED' : 'MATCHED'}
                                             </span>
                                         </div>
