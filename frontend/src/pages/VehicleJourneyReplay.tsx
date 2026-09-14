@@ -300,11 +300,11 @@ export default function VehicleJourneyReplay() {
                                     zoom={12}
                                     className="w-full h-full"
                                     zoomControl={false}
+                                    attributionControl={false}
                                 >
                                     <TileLayer
-                                        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                                        attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                                        maxZoom={19}
+                                        url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                                        maxZoom={20}
                                     />
 
                                     {/* Inject CSS keyframes into the map DOM */}

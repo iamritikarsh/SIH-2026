@@ -407,12 +407,11 @@ export default function VehicleTracking() {
                                         style={{ height: '100%', width: '100%' }}
                                         className="z-0"
                                         zoomControl={true}
+                                        attributionControl={false}
                                     >
-                                        {/* ── Clean light map tile — no API key required ── */}
                                         <TileLayer
-                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                            maxZoom={19}
+                                            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                                            maxZoom={20}
                                         />
 
                                         {/* ── Auto-fit to trajectory ── */}
