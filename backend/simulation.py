@@ -43,7 +43,7 @@ _real_places = [
     'Indirapuram Habitat Centre', 'Kaushambi Metro', 'Raj Nagar Extension', 'Mohan Nagar Junction'
 ]
 
-for i in range(13, 10001):
+for i in range(13, 2001):
     # Expanded bounds for Agra (27.17) to Delhi
     _lat = round(random.uniform(27.00, 28.88), 4)
     # Expanded bounds for Agra (78.00)
@@ -119,7 +119,7 @@ _types = ["Sedan", "SUV", "Hatchback", "Truck", "Motorcycle", "Van", "Bus"]
 _colors = ["White", "Black", "Silver", "Grey", "Red", "Blue", "Yellow", "Green"]
 _states = ["DL", "HR", "UP", "CH", "PB", "RJ"]
 
-for i in range(113, 10113):
+for i in range(113, 4113):
     _plate = f"{random.choice(_states)}{random.randint(10,99)}{random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')}{random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')}{random.randint(1000,9999)}"
     VEHICLES.append(Vehicle(
         id=f"V-{i}",
@@ -359,6 +359,8 @@ class TrafficSimulator:
             
         if traj:
             traj.path.append(TrajectoryNode(camera_id=cam_id, timestamp=ts.isoformat(), speed=speed))
+            if len(traj.path) > 10:
+                traj.path = traj.path[-10:]
             
         if speed > 70:
             self.alerts.insert(0, Alert(
