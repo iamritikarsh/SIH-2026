@@ -219,6 +219,18 @@ export default function VehicleJourneyReplay() {
         };
     }, [progress, journey]);
 
+    /* ── Auto-scroll timeline to active camera ── */
+    useEffect(() => {
+        if (animState?.currentIdx !== undefined) {
+            const el = document.getElementById(`timeline-item-${animState.currentIdx}`);
+            if (el) {
+                // block: 'nearest' is better so it doesn't jarringly scroll if already in view
+                // but if we want it to stay centered, 'center' is good. Let's use 'center' for that premium track feel.
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [animState?.currentIdx]);
+
     /* ── Helpers ── */
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -473,7 +485,7 @@ export default function VehicleJourneyReplay() {
                                     const isActive = animState?.currentIdx === i;
                                     const isPassed = animState ? animState.currentIdx > i : false;
                                     return (
-                                        <div key={i} className="relative pl-10 mb-5 last:mb-0 z-10">
+                                        <div key={i} id={`timeline-item-${i}`} className="relative pl-10 mb-5 last:mb-0 z-10">
                                             <div className={`absolute left-0 w-5 h-5 rounded-full border-4 border-white shadow transition-all ${isActive ? 'bg-blue-500 ring-2 ring-blue-200 ring-offset-1 scale-110' : isPassed ? 'bg-slate-400' : 'bg-slate-200'}`} style={{ top: 6 }} />
                                             <div className="flex justify-between mb-1">
                                                 <span className="text-[10px] font-mono text-slate-500">{new Date(n.event.timestamp).toLocaleTimeString()}</span>
