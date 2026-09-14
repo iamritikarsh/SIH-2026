@@ -22,15 +22,45 @@ CAMERAS = [
     Camera(id="CAM-12", name="Akshardham Bridge",   location="East Delhi",     lat=28.6127, lng=77.2773),
 ]
 
-# Generate additional cameras to reach 10000 total live cameras across Delhi NCR
-_zones = ["North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"]
+# Generate additional cameras to reach 10000 total live cameras across Delhi NCR & UP/HR
+_zones = [
+    'Delhi (Central)', 'Delhi (South)', 'Delhi (North)', 'Delhi (East)', 'Delhi (West)', 
+    'Noida (UP)', 'Greater Noida', 'Gurugram (HR)', 'Faridabad (HR)', 'Agra (UP)', 'Ghaziabad (UP)'
+]
+
+_real_places = [
+    'Connaught Place Inner Circle', 'Rajiv Chowk', 'India Gate Hexagon', 'ITO Junction', 
+    'Kashmere Gate ISBT', 'AIIMS Flyover', 'Nehru Place Ring Road', 'Dhaula Kuan Interchange',
+    'Lajpat Nagar Central Market', 'Rajouri Garden Metro', 'Saket District Centre',
+    'Akshardham Flyover', 'Vasant Kunj Nelson Mandela Marg', 'Hauz Khas Village',
+    'Chandni Chowk Red Fort', 'Karol Bagh Pusa Road', 'Okhla Phase 1', 'Janakpuri District Centre',
+    'Sector 18 Noida', 'Noida City Centre', 'Yamuna Expressway Toll', 'Noida Expressway Mahamaya',
+    'Knowledge Park Greater Noida', 'Pari Chowk', 'Sector 62 Noida IT Park',
+    'Cyber Hub Gurugram', 'IFFCO Chowk', 'MG Road Metro Station', 'Rajiv Chowk Gurugram',
+    'Golf Course Road', 'Sohna Road Intersection', 'Ambience Mall NH8',
+    'Badarpur Border', 'Bata Chowk Faridabad', 'NIT Faridabad', 'Surajkund Road',
+    'Taj Mahal East Gate', 'Sikandra Crossing Agra', 'Agra Fort Bypass', 'Fatehabad Road',
+    'Indirapuram Habitat Centre', 'Kaushambi Metro', 'Raj Nagar Extension', 'Mohan Nagar Junction'
+]
+
 for i in range(13, 10001):
-    # Delhi bounds approx: Lat 28.40 to 28.88, Lng 76.84 to 77.34
-    _lat = round(random.uniform(28.40, 28.88), 4)
-    _lng = round(random.uniform(76.84, 77.34), 4)
+    # Expanded bounds for Agra (27.17) to Delhi
+    _lat = round(random.uniform(27.00, 28.88), 4)
+    # Expanded bounds for Agra (78.00)
+    _lng = round(random.uniform(76.84, 78.05), 4)
+    
+    _place = random.choice(_real_places)
+    _suffix = random.choice(['Junction', 'Signal', 'Flyover', 'Underpass', 'Toll', 'Exit', 'Entry', 'Crossroad', 'Main Road'])
+    
+    # Mix exact known places with slightly randomized generic realistic names
+    if random.random() > 0.3:
+        name = f"{_place} - CCTV-{random.randint(1, 9)}"
+    else:
+        name = f"{random.choice(['NH-8', 'Ring Road', 'Expressway', 'State Highway', 'Main Street'])} {_suffix} CCTV-{random.randint(10, 99)}"
+
     CAMERAS.append(Camera(
         id=f"CAM-{i}",
-        name=f"Zone {random.randint(1, 100)} Node",
+        name=name,
         location=random.choice(_zones),
         lat=_lat, lng=_lng
     ))
