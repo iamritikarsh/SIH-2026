@@ -31,7 +31,7 @@ export default function Dashboard() {
     const metrics = [
         { label: 'Vehicles Detected', value: state?.total_vehicles_detected ?? 0, icon: Car, color: 'text-blue-400', accent: 'bg-blue-500/8' },
         { label: 'Active Tracks', value: state?.active_vehicles_count ?? 0, icon: Activity, color: 'text-green-400', accent: 'bg-green-500/8' },
-        { label: 'Cameras Online', value: '6 / 6', icon: Video, color: 'text-sky-400', accent: 'bg-sky-500/8' },
+        { label: 'Cameras Online', value: '12 / 12', icon: Video, color: 'text-sky-400', accent: 'bg-sky-500/8' },
         { label: 'Avg Speed', value: '44 km/h', icon: Gauge, color: 'text-amber-400', accent: 'bg-amber-500/8' },
     ];
 
@@ -58,7 +58,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-5 mt-5">
                             <span className="status-online">System Online</span>
                             <span className="status-sim">Simulation Active</span>
-                            <span className="label-xs">6 Nodes Monitored</span>
+                            <span className="label-xs">12 Nodes Monitored</span>
                         </div>
                     </div>
                     <button
