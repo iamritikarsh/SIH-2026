@@ -118,6 +118,7 @@ class TrafficSimulator:
         self.alerts: List[Alert] = []
         self.trajectories: Dict[str, Trajectory] = {}
         self.scheduled_detections = []
+        self.total_detected_count = 0
         
         self.reset()
         
@@ -129,6 +130,7 @@ class TrafficSimulator:
         
         self.events = []
         self.alerts = []
+        self.total_detected_count = 0
         self.trajectories = {v.id: Trajectory(vehicle_id=v.id, path=[]) for v in VEHICLES}
         self.start_sim_time = datetime.now()
         self.current_sim_time = self.start_sim_time
@@ -252,6 +254,7 @@ class TrafficSimulator:
             speed=round(speed, 1)
         )
         self.events.insert(0, event)
+        self.total_detected_count += 1
         if len(self.events) > 800:
             self.events = self.events[:800]
             
@@ -334,6 +337,7 @@ class TrafficSimulator:
                 speed=node["speed"]
             )
             self.events.insert(0, event)
+            self.total_detected_count += 1
             self.trajectories[v.id].path.append(TrajectoryNode(camera_id=node["cam"], timestamp=ts.isoformat(), speed=node["speed"]))
             
         self.current_sim_time = base_time + timedelta(seconds=500)
@@ -347,7 +351,7 @@ class TrafficSimulator:
             simulation_speed=self.simulation_speed,
             simulation_time=self.current_sim_time.isoformat(),
             active_vehicles_count=active,
-            total_vehicles_detected=len(self.events)
+            total_vehicles_detected=self.total_detected_count
         )
 
 simulator = TrafficSimulator()
