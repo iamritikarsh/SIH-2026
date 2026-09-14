@@ -53,7 +53,7 @@ async def get_events(limit: int = 50):
     return simulator.events[:limit]
     
 @app.get("/api/alerts", response_model=List[Alert])
-async def get_alerts(limit: int = 20):
+async def get_alerts(limit: int = 500):
     return simulator.alerts[:limit]
 
 @app.post("/api/alerts/{alert_id}/resolve")

@@ -302,8 +302,8 @@ class TrafficSimulator:
                         reference_id=cam.id
                     ))
             
-        if len(self.alerts) > 100:
-            self.alerts = self.alerts[:100]
+        if len(self.alerts) > 500:
+            self.alerts = self.alerts[:500]
             
     def run_sih_demo(self):
         """Pre-populates a specific demo sequence for the judges."""
