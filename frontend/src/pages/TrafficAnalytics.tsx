@@ -37,14 +37,17 @@ export default function TrafficAnalytics() {
 
     // KPIs
     const activeVehicles = state?.active_vehicles_count || 0;
-    const totalDetections = events.length;
+    const totalDetections = state?.total_vehicles_detected || 0;
     const avgSpeed = events.length > 0 ? Math.round(events.reduce((acc, e) => acc + e.speed, 0) / events.length) : 0;
     
-    // Simple traffic flow (events per minute approx for demo)
-    const trafficFlow = Math.round((totalDetections / Math.max(1, (new Date().getTime() - (state ? new Date(state.simulation_time).getTime() : 0)) / 1000)) * 60) || 0;
+    let trafficFlow = 0;
+    if (events.length > 1) {
+        const timeWindow = Math.abs(new Date(events[0].timestamp).getTime() - new Date(events[events.length - 1].timestamp).getTime()) / 1000;
+        trafficFlow = Math.round((events.length / Math.max(1, timeWindow)) * 3600);
+    }
     let congestion = "LOW";
     if (avgSpeed > 0 && avgSpeed < 35) congestion = "HIGH";
-    else if (totalDetections > 30) congestion = "MEDIUM";
+    else if (trafficFlow > 1500) congestion = "MEDIUM";
 
     // Chart Data: Flow over time
     // We group events by 10s intervals
@@ -198,9 +201,9 @@ export default function TrafficAnalytics() {
                                 let color = "text-green-400";
                                 let bg = "bg-green-400/10 border-green-400/20";
                                 
-                                if (c.avgSpeed > 0 && c.avgSpeed < 35 && c.count > 5) {
+                                if (c.avgSpeed > 0 && c.avgSpeed < 35) {
                                     status = "HIGH"; color = "text-red-400"; bg = "bg-red-400/10 border-red-400/20";
-                                } else if (c.count > 8) {
+                                } else if (c.avgSpeed > 0 && c.avgSpeed < 50) {
                                     status = "MEDIUM"; color = "text-amber-400"; bg = "bg-amber-400/10 border-amber-400/20";
                                 }
 
