@@ -219,6 +219,7 @@ class TrafficSimulator:
         self.last_tick_time = now
         
         self.events = []
+        self.cam_events = {c.id: [] for c in CAMERAS}
         self.alerts = []
         self.total_detected_count = 0
         self.trajectories = {v.id: Trajectory(vehicle_id=v.id, path=[]) for v in VEHICLES}

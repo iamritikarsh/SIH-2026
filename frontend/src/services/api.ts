@@ -6,6 +6,7 @@ export const api = {
     getCameras: () => axios.get(`${API_BASE}/cameras`).then(res => res.data),
     getVehicles: () => axios.get(`${API_BASE}/vehicles`).then(res => res.data),
     getEvents: (limit = 800) => axios.get(`${API_BASE}/events?limit=${limit}`).then(res => res.data),
+    getEventsBatch: (cams: string[]) => axios.get(`${API_BASE}/events/batch?cams=${cams.join(',')}`).then(res => res.data),
     getAlerts: () => axios.get(`${API_BASE}/alerts`).then(res => res.data),
     resolveAlert: (id: string) => axios.post(`${API_BASE}/alerts/${id}/resolve`).then(res => res.data),
     getTrajectories: () => axios.get(`${API_BASE}/trajectories`).then(res => res.data),

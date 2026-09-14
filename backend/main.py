@@ -52,6 +52,16 @@ async def get_vehicles():
 async def get_events(limit: int = 50):
     return simulator.events[:limit]
     
+@app.get("/api/events/batch", response_model=List[DetectionEvent])
+async def get_events_batch(cams: str = ""):
+    cam_ids = cams.split(',')
+    res = []
+    if hasattr(simulator, 'cam_events'):
+        for cid in cam_ids:
+            if cid in simulator.cam_events:
+                res.extend(simulator.cam_events[cid])
+    return res
+    
 @app.get("/api/alerts", response_model=List[Alert])
 async def get_alerts(limit: int = 500):
     return simulator.alerts[:limit]

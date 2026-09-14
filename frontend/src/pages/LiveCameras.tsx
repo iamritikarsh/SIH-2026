@@ -185,15 +185,24 @@ export default function LiveCameras() {
     const [events, setEvents] = useState<DetectionEvent[]>([]);
     const [page, setPage] = useState(1);
     const ITEMS_PER_PAGE = 24;
+    const visibleCameras = useMemo(() => {
+        return cameras.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+    }, [cameras, page]);
 
     useEffect(() => { api.getCameras().then(setCameras); }, []);
 
     useEffect(() => {
-        const fetch = async () => { try { setEvents(await api.getEvents()); } catch {} };
+        if (visibleCameras.length === 0) return;
+        const fetch = async () => { 
+            try { 
+                const camIds = visibleCameras.map(c => c.id);
+                setEvents(await api.getEventsBatch(camIds)); 
+            } catch {} 
+        };
         fetch();
         const iv = setInterval(fetch, 1000);
         return () => clearInterval(iv);
-    }, []);
+    }, [visibleCameras]);
 
     return (
         <div className="flex flex-col gap-6 max-w-[1400px] mx-auto">
@@ -231,7 +240,7 @@ export default function LiveCameras() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {cameras.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((cam, i) => (
+                {visibleCameras.map((cam, i) => (
                     <CamFeed key={cam.id} cam={cam} index={(page - 1) * ITEMS_PER_PAGE + i} events={events} />
                 ))}
             </div>
