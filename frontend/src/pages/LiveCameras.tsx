@@ -76,11 +76,11 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                 <div className="cam-scanline" />
 
                 {/* Camera HUD */}
-                <div className="absolute top-2 left-2 text-[9px] mono text-blue-400/70 leading-tight">
+                <div className="absolute top-2 left-2 text-[9px] mono text-[var(--blue)]/70 leading-tight">
                     <div>{cam.id}</div>
                     <div>{new Date().toLocaleTimeString()}</div>
                 </div>
-                <div className="absolute top-2 right-2 mono text-[9px] text-red-400/70">● REC</div>
+                <div className="absolute top-2 right-2 mono text-[9px] text-red-600/70">● REC</div>
 
                 {/* Vehicle bounding box */}
                 {latest && (
@@ -90,15 +90,15 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                         <div className="absolute -top-px -left-px bg-green-500 text-[var(--bg-base)] text-[9px] font-mono font-bold px-1.5 py-0.5 leading-none">
                             {latest.vehicle_id}
                         </div>
-                        <div className="absolute -bottom-px left-0 bg-slate-900/80 text-green-400 text-[9px] mono px-1.5 py-0.5 leading-none">
+                        <div className="absolute -bottom-px left-0 bg-[var(--bg-base)]/80 text-green-600 text-[9px] mono px-1.5 py-0.5 leading-none">
                             {latest.plate}
                         </div>
 
                         {/* Vehicle colour dot */}
-                        <div className="absolute -top-px right-0 flex items-center gap-1 bg-slate-900/80 px-1.5 py-0.5">
+                        <div className="absolute -top-px right-0 flex items-center gap-1 bg-[var(--bg-base)]/80 px-1.5 py-0.5">
                             <span className="w-2 h-2 rounded-full inline-block border border-white/20"
                                 style={{ background: VEH_COLORS[latest.color] || '#94a3b8' }} />
-                            <span className="text-[9px] text-slate-400">{latest.color}</span>
+                            <span className="text-[9px] text-[var(--text-secondary)]">{latest.color}</span>
                         </div>
 
                         {/* Corner markers */}
@@ -118,7 +118,7 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                             <ExternalLink size={12} /> TRACK
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); navigate(`/replay?vehicle=${latest.plate}`); }} 
-                                className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 text-[10px] font-bold px-3 py-1.5 rounded transition-colors shadow">
+                                className="flex items-center gap-1.5 bg-[var(--bg-card)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-slate-600 text-[10px] font-bold px-3 py-1.5 rounded transition-colors shadow">
                             <PlaySquare size={12} /> REPLAY
                         </button>
                     </div>
@@ -128,9 +128,9 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            <span className="mono text-[10px] text-blue-400 font-bold tracking-widest uppercase">Scanning</span>
+                            <span className="mono text-[10px] text-[var(--blue)] font-bold tracking-widest uppercase">Scanning</span>
                         </div>
-                        <span className="text-[9px] text-white/50 mono">0 vehicles detected</span>
+                        <span className="text-[9px] text-[var(--text-primary)]/50 mono">0 vehicles detected</span>
                     </div>
                 )}
             </div>
@@ -139,7 +139,7 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
             <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
                 <span className="label-xs">{recent.length} VEHICLE{recent.length === 1 ? '' : 'S'} DETECTED</span>
                 {latest && (
-                    <span className="mono text-[10px] text-amber-400">{latest.speed} km/h</span>
+                    <span className="mono text-[10px] text-amber-600">{latest.speed} km/h</span>
                 )}
             </div>
 
@@ -158,9 +158,9 @@ function CamFeed({ cam, index, events }: { cam: Camera; index: number; events: D
                         {recent.map(evt => (
                             <tr key={evt.id} className="cursor-pointer" onClick={() => navigate(`/tracking?q=${evt.plate}`)}>
                                 <td className="mono text-[11px]">{new Date(evt.timestamp).toLocaleTimeString()}</td>
-                                <td className="text-blue-400 mono text-[11px]">{evt.vehicle_id}</td>
+                                <td className="text-[var(--blue)] mono text-[11px]">{evt.vehicle_id}</td>
                                 <td className="mono text-[11px]">{evt.plate}</td>
-                                <td className="text-right text-[11px] text-green-400">{evt.detection_confidence.toFixed(0)}%</td>
+                                <td className="text-right text-[11px] text-green-600">{evt.detection_confidence.toFixed(0)}%</td>
                             </tr>
                         ))}
                     </tbody>
@@ -197,7 +197,7 @@ export default function LiveCameras() {
         <div className="flex flex-col gap-6 max-w-[1400px] mx-auto">
             <div className="flex items-end justify-between">
                 <div>
-                    <div className="label-xs text-blue-400 mb-2">SURVEILLANCE GRID</div>
+                    <div className="label-xs text-[var(--blue)] mb-2">SURVEILLANCE GRID</div>
                     <h2 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">Live Camera Feeds</h2>
                     <p className="text-[var(--text-secondary)] text-sm mt-1">{cameras.length} nodes active — click any detection to begin tracking</p>
                 </div>

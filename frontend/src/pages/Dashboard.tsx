@@ -29,16 +29,16 @@ export default function Dashboard() {
     };
 
     const metrics = [
-        { label: 'Vehicles Detected', value: state?.total_vehicles_detected ?? 0, icon: Car, color: 'text-blue-400', accent: 'bg-blue-500/8' },
-        { label: 'Active Tracks', value: state?.active_vehicles_count ?? 0, icon: Activity, color: 'text-green-400', accent: 'bg-green-500/8' },
+        { label: 'Vehicles Detected', value: state?.total_vehicles_detected ?? 0, icon: Car, color: 'text-[var(--blue)]', accent: 'bg-blue-500/8' },
+        { label: 'Active Tracks', value: state?.active_vehicles_count ?? 0, icon: Activity, color: 'text-green-600', accent: 'bg-green-500/8' },
         { label: 'Cameras Online', value: '12 / 12', icon: Video, color: 'text-sky-400', accent: 'bg-sky-500/8' },
-        { label: 'Avg Speed', value: '44 km/h', icon: Gauge, color: 'text-amber-400', accent: 'bg-amber-500/8' },
+        { label: 'Avg Speed', value: '44 km/h', icon: Gauge, color: 'text-amber-600', accent: 'bg-amber-500/8' },
     ];
 
     const alertColor = (type: string) => {
-        if (type === 'HIGH_SPEED') return 'text-amber-400';
-        if (type === 'CONGESTION') return 'text-red-400';
-        return 'text-blue-400';
+        if (type === 'HIGH_SPEED') return 'text-amber-600';
+        if (type === 'CONGESTION') return 'text-red-600';
+        return 'text-[var(--blue)]';
     };
 
     return (
@@ -48,8 +48,8 @@ export default function Dashboard() {
             <div className="traffic-hero rounded-md overflow-hidden">
                 <div className="px-8 py-10 flex items-end justify-between gap-6 flex-wrap">
                     <div>
-                        <div className="label-xs text-blue-400 mb-3 tracking-[0.2em]">CITY-WIDE AI TRAFFIC INTELLIGENCE</div>
-                        <h1 className="text-3xl font-bold text-white tracking-tight leading-tight mb-2">
+                        <div className="label-xs text-[var(--blue)] mb-3 tracking-[0.2em]">CITY-WIDE AI TRAFFIC INTELLIGENCE</div>
+                        <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight leading-tight mb-2">
                             Traffic Command Centre
                         </h1>
                         <p className="text-[var(--text-secondary)] text-sm max-w-xl">
@@ -92,7 +92,7 @@ export default function Dashboard() {
                 <div className="panel flex flex-col">
                     <div className="panel-header">
                         <span className="text-[13px] font-semibold text-[var(--text-primary)]">Simulation Engine</span>
-                        <span className={`text-[11px] font-mono ${state?.is_simulating ? 'text-green-400' : 'text-[var(--text-muted)]'}`}>
+                        <span className={`text-[11px] font-mono ${state?.is_simulating ? 'text-green-600' : 'text-[var(--text-muted)]'}`}>
                             {state?.is_simulating ? '● RUNNING' : '○ IDLE'}
                         </span>
                     </div>
@@ -102,14 +102,14 @@ export default function Dashboard() {
                                 className={`flex-1 flex justify-center items-center gap-2 py-2.5 rounded text-[12px] font-semibold border transition-all ${
                                     state?.is_simulating
                                         ? 'bg-transparent border-[var(--border-subtle)] text-[var(--text-muted)] cursor-not-allowed'
-                                        : 'border-green-500/40 bg-green-500/8 text-green-400 hover:bg-green-500/15'
+                                        : 'border-green-500/40 bg-green-500/8 text-green-600 hover:bg-green-500/15'
                                 }`}
                             ><Play size={14} /> Start</button>
                             <button onClick={() => api.pauseSim()} disabled={!state?.is_simulating}
                                 className={`flex-1 flex justify-center items-center gap-2 py-2.5 rounded text-[12px] font-semibold border transition-all ${
                                     !state?.is_simulating
                                         ? 'bg-transparent border-[var(--border-subtle)] text-[var(--text-muted)] cursor-not-allowed'
-                                        : 'border-amber-500/40 bg-amber-500/8 text-amber-400 hover:bg-amber-500/15'
+                                        : 'border-amber-500/40 bg-amber-500/8 text-amber-600 hover:bg-amber-500/15'
                                 }`}
                             ><Pause size={14} /> Pause</button>
                             <button onClick={() => api.resetSim()}
@@ -124,7 +124,7 @@ export default function Dashboard() {
                                     <button key={s} onClick={() => api.setSpeed(s)}
                                         className={`flex-1 py-1.5 rounded text-[11px] font-mono font-semibold border transition-all ${
                                             state?.simulation_speed === s
-                                                ? 'border-blue-500/50 bg-blue-500/10 text-blue-400'
+                                                ? 'border-blue-500/50 bg-blue-500/10 text-[var(--blue)]'
                                                 : 'border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-white/4'
                                         }`}
                                     >{s}×</button>
@@ -141,7 +141,7 @@ export default function Dashboard() {
                             ].map(([k, v]) => (
                                 <div key={k}>
                                     <div className="label-xs mb-0.5">{k}</div>
-                                    <div className={`text-[11px] font-mono font-semibold ${v === 'ACTIVE' ? 'text-green-400' : 'text-[var(--text-secondary)]'}`}>● {v}</div>
+                                    <div className={`text-[11px] font-mono font-semibold ${v === 'ACTIVE' ? 'text-green-600' : 'text-[var(--text-secondary)]'}`}>● {v}</div>
                                 </div>
                             ))}
                         </div>
@@ -152,7 +152,7 @@ export default function Dashboard() {
                 <div className="panel lg:col-span-2 flex flex-col overflow-hidden">
                     <div className="panel-header">
                         <span className="text-[13px] font-semibold text-[var(--text-primary)] flex items-center gap-2">
-                            <AlertTriangle size={14} className="text-red-400" /> System Alerts
+                            <AlertTriangle size={14} className="text-red-600" /> System Alerts
                         </span>
                         <span className="label-xs">{alerts.length} ACTIVE</span>
                     </div>

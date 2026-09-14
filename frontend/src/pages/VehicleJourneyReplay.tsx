@@ -73,9 +73,9 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
         if (this.state.hasError) {
             return (
                 <div className="flex-1 flex flex-col items-center justify-center bg-white p-8 gap-4">
-                    <Car size={36} className="text-slate-300" />
+                    <Car size={36} className="text-[var(--text-secondary)]" />
                     <h2 className="text-xl font-bold text-slate-700">Map failed to load</h2>
-                    <p className="text-sm text-slate-400 font-mono max-w-sm text-center">{this.state.err}</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-mono max-w-sm text-center">{this.state.err}</p>
                     <button onClick={() => window.location.reload()} className="px-5 py-2 bg-blue-600 text-white rounded font-bold text-sm">Reload Page</button>
                 </div>
             );
@@ -247,24 +247,24 @@ export default function VehicleJourneyReplay() {
 
     /* ════════════ RENDER ════════════ */
     return (
-        <div className="flex flex-col h-[calc(100vh-80px)] -m-6 bg-slate-50">
+        <div className="flex flex-col h-[calc(100vh-80px)] -m-6 bg-[var(--bg-base)]">
 
             {/* ── Header ── */}
-            <div className="bg-[#0f172a] text-white p-4 border-b border-slate-800 flex items-center justify-between shrink-0 shadow-lg">
+            <div className="bg-white text-[var(--text-primary)] p-4 border-b border-[var(--border)] flex items-center justify-between shrink-0 shadow-lg">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center"><RotateCcw size={16} /></div>
                     <div>
                         <h1 className="text-sm font-bold tracking-widest uppercase">Vehicle Journey Replay</h1>
-                        <p className="text-[10px] text-slate-400">Reconstruct and replay a vehicle's movement across the city.</p>
+                        <p className="text-[10px] text-[var(--text-secondary)]">Reconstruct and replay a vehicle's movement across the city.</p>
                     </div>
                 </div>
                 <form onSubmit={handleSearch} className="flex items-center gap-2">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" size={14} />
                         <input
                             type="text" value={searchInput} onChange={e => setSearchInput(e.target.value)}
                             placeholder="SEARCH VEHICLE ID / LICENSE PLATE"
-                            className="bg-slate-900 border border-slate-700 text-sm rounded pl-9 pr-4 py-1.5 focus:border-blue-500 focus:outline-none w-72 transition-colors placeholder:text-[10px] font-mono"
+                            className="bg-[var(--bg-base)] border border-[var(--border)] text-sm rounded pl-9 pr-4 py-1.5 focus:border-blue-500 focus:outline-none w-72 transition-colors placeholder:text-[10px] font-mono"
                         />
                     </div>
                     <button type="submit" className="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 rounded text-sm font-bold tracking-wide transition-colors">SEARCH VEHICLE</button>
@@ -277,10 +277,10 @@ export default function VehicleJourneyReplay() {
                     {/* Summary bar */}
                     <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0 shadow-sm">
                         <div className="flex items-center gap-3">
-                            <span className="text-lg font-mono font-bold text-slate-900 bg-slate-100 px-2 rounded border border-slate-300">{journey.plate}</span>
+                            <span className="text-lg font-mono font-bold text-[var(--text-primary)] bg-slate-100 px-2 rounded border border-slate-300">{journey.plate}</span>
                             <div className="flex flex-col">
                                 <span className="text-[11px] font-semibold text-slate-700 capitalize">{journey.color} {journey.type}</span>
-                                <span className="text-[9px] font-mono text-slate-500">{journey.id}</span>
+                                <span className="text-[9px] font-mono text-[var(--text-muted)]">{journey.id}</span>
                             </div>
                             <span className="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse inline-block" /> TRACKED
@@ -296,7 +296,7 @@ export default function VehicleJourneyReplay() {
                                 ['Avg Speed',  `${journey.avgSpeed.toFixed(0)} km/h`],
                             ].map(([k, v]) => (
                                 <div key={k} className="flex flex-col">
-                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{k}</span>
+                                    <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-0.5">{k}</span>
                                     <span className="text-[11px] font-bold text-slate-800 font-mono">{v}</span>
                                 </div>
                             ))}
@@ -366,7 +366,7 @@ export default function VehicleJourneyReplay() {
                                             <Marker key={i} position={[n.cam.lat, n.cam.lng]} icon={camIcon(active, i + 1, isPassed)}>
                                                 <Popup closeButton={false}>
                                                     <div className="p-1 min-w-[160px]">
-                                                        <div className="font-mono text-[9px] text-slate-500 font-bold">{n.cam.id}</div>
+                                                        <div className="font-mono text-[9px] text-[var(--text-muted)] font-bold">{n.cam.id}</div>
                                                         <div className="font-bold text-[13px] text-slate-800 mb-2">{n.cam.name}</div>
                                                         <img src={`/cameras/${n.cam.id.toLowerCase()}.jpg`} className="w-full h-20 object-cover rounded mb-2 border" onError={e => (e.currentTarget.style.display = 'none')} />
                                                         <div className="text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200 text-center font-bold">
@@ -386,9 +386,9 @@ export default function VehicleJourneyReplay() {
                             </ErrorBoundary>
 
                             {/* Replay Controls */}
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[400] bg-[#0f172a]/95 backdrop-blur-md p-3 rounded-xl border border-slate-700/50 shadow-2xl flex items-center gap-4 w-[580px]">
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[400] bg-white/95 backdrop-blur-md p-3 rounded-xl border border-[var(--border)] shadow-2xl flex items-center gap-4 w-[580px]">
                                 <div className="flex gap-2">
-                                    <button onClick={() => { setProgress(0); setIsPlaying(false); setHasFinished(false); }} className="w-8 h-8 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                                    <button onClick={() => { setProgress(0); setIsPlaying(false); setHasFinished(false); }} className="w-8 h-8 flex items-center justify-center rounded bg-[var(--bg-card)] hover:bg-[var(--border)] text-[var(--text-secondary)] transition-colors">
                                         <RotateCcw size={14} />
                                     </button>
                                     <button onClick={() => { if (hasFinished) { setProgress(0); setHasFinished(false); } setIsPlaying(p => !p); }} className="w-12 h-8 flex items-center justify-center rounded bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow">
@@ -396,15 +396,15 @@ export default function VehicleJourneyReplay() {
                                     </button>
                                 </div>
                                 <div className="flex-1 flex items-center gap-3">
-                                    <span className="text-[10px] font-mono text-slate-400 w-10 text-right">{fmt(progress * journey.durationSec)}</span>
+                                    <span className="text-[10px] font-mono text-[var(--text-secondary)] w-10 text-right">{fmt(progress * journey.durationSec)}</span>
                                     <input type="range" min="0" max="1" step="0.001" value={progress} onChange={seek}
-                                        className="flex-1 accent-blue-500 h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer" />
-                                    <span className="text-[10px] font-mono text-slate-400 w-10">{fmt(journey.durationSec)}</span>
+                                        className="flex-1 accent-blue-500 h-1.5 bg-[var(--bg-card)] rounded-full appearance-none cursor-pointer" />
+                                    <span className="text-[10px] font-mono text-[var(--text-secondary)] w-10">{fmt(journey.durationSec)}</span>
                                 </div>
-                                <div className="flex bg-slate-800 p-0.5 rounded gap-0.5">
+                                <div className="flex bg-[var(--bg-card)] p-0.5 rounded gap-0.5">
                                     {[0.5, 1, 2, 4].map(s => (
                                         <button key={s} onClick={() => setSpeed(s)}
-                                            className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${speed === s ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+                                            className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${speed === s ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                                             {s}×
                                         </button>
                                     ))}
@@ -413,26 +413,26 @@ export default function VehicleJourneyReplay() {
 
                             {/* Current location panel */}
                             {animState && !hasFinished && (
-                                <div className="absolute top-4 left-4 z-[400] bg-[#0f172a]/95 backdrop-blur-md p-4 rounded-xl border border-blue-900/40 shadow-2xl w-60 pointer-events-none">
-                                    <span className="text-[9px] font-bold text-blue-400/70 uppercase tracking-[0.2em] block mb-2 flex items-center gap-1.5">
+                                <div className="absolute top-4 left-4 z-[400] bg-white/95 backdrop-blur-md p-4 rounded-xl border border-[var(--border)] shadow-2xl w-60 pointer-events-none">
+                                    <span className="text-[9px] font-bold text-[var(--blue)]/70 uppercase tracking-[0.2em] block mb-2 flex items-center gap-1.5">
                                         <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse inline-block"></span>
                                         VEHICLE TRACKING
                                     </span>
                                     <div className="flex items-start gap-2 mb-3">
-                                        <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0"><MapPin size={13} /></div>
+                                        <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-[var(--blue)] shrink-0"><MapPin size={13} /></div>
                                         <div>
-                                            <div className="text-[10px] font-mono font-bold text-blue-400/60">{journey.nodes[animState.currentIdx]?.cam.id}</div>
-                                            <div className="text-[13px] font-bold text-white leading-tight">{journey.nodes[animState.currentIdx]?.cam.name}</div>
+                                            <div className="text-[10px] font-mono font-bold text-[var(--blue)]/60">{journey.nodes[animState.currentIdx]?.cam.id}</div>
+                                            <div className="text-[13px] font-bold text-[var(--text-primary)] leading-tight">{journey.nodes[animState.currentIdx]?.cam.name}</div>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--border)]">
                                         <div>
-                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Speed</span>
-                                            <span className="text-[14px] font-mono font-bold text-amber-400">{journey.nodes[animState.currentIdx]?.event.speed}<span className="text-[9px] text-slate-500 ml-0.5">km/h</span></span>
+                                            <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest block">Speed</span>
+                                            <span className="text-[14px] font-mono font-bold text-amber-600">{journey.nodes[animState.currentIdx]?.event.speed}<span className="text-[9px] text-[var(--text-muted)] ml-0.5">km/h</span></span>
                                         </div>
                                         <div>
-                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Status</span>
-                                            <span className="text-[10px] font-bold text-green-400 flex items-center gap-0.5">
+                                            <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-widest block">Status</span>
+                                            <span className="text-[10px] font-bold text-green-600 flex items-center gap-0.5">
                                                 <CheckCircle size={10} /> {animState.currentIdx === 0 ? 'DETECTED' : 'MATCHED'}
                                             </span>
                                         </div>
@@ -446,7 +446,7 @@ export default function VehicleJourneyReplay() {
                                     <div className="bg-white/98 p-7 rounded-2xl border border-slate-200 shadow-2xl flex flex-col items-center max-w-sm w-full mx-4">
                                         <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-4"><CheckCircle size={24} /></div>
                                         <h2 className="text-xl font-bold text-slate-800 mb-1">JOURNEY REPLAY COMPLETE</h2>
-                                        <p className="text-sm text-slate-500 mb-6 font-mono bg-slate-100 px-3 py-1 rounded">{journey.plate}</p>
+                                        <p className="text-sm text-[var(--text-muted)] mb-6 font-mono bg-slate-100 px-3 py-1 rounded">{journey.plate}</p>
                                         <div className="grid grid-cols-2 gap-4 mb-7 w-full">
                                             {[
                                                 ['Distance',  `${journey.distance.toFixed(1)} km`],
@@ -454,14 +454,14 @@ export default function VehicleJourneyReplay() {
                                                 ['First Cam', journey.nodes[0].cam.id],
                                                 ['Last Cam',  journey.nodes[journey.nodes.length-1].cam.id],
                                             ].map(([k, v]) => (
-                                                <div key={k} className="flex flex-col items-center p-3 bg-slate-50 rounded border border-slate-100">
-                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{k}</span>
+                                                <div key={k} className="flex flex-col items-center p-3 bg-[var(--bg-base)] rounded border border-slate-100">
+                                                    <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1">{k}</span>
                                                     <span className="text-base font-mono font-bold text-slate-700">{v}</span>
                                                 </div>
                                             ))}
                                         </div>
                                         <button onClick={() => { setProgress(0); setHasFinished(false); setIsPlaying(true); }}
-                                            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold tracking-widest uppercase rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
+                                            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold tracking-widest uppercase rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm">
                                             <RotateCcw size={16} /> REPLAY AGAIN
                                         </button>
                                     </div>
@@ -471,8 +471,8 @@ export default function VehicleJourneyReplay() {
 
                         {/* ── Right timeline sidebar ── */}
                         <div className="w-[320px] bg-white border-l border-slate-200 flex flex-col shrink-0">
-                            <div className="p-4 border-b border-slate-100 bg-slate-50">
-                                <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <div className="p-4 border-b border-slate-100 bg-[var(--bg-base)]">
+                                <h3 className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-2">
                                     <Clock size={13} className="text-blue-500" />
                                     Camera Journey Timeline
                                 </h3>
@@ -488,23 +488,23 @@ export default function VehicleJourneyReplay() {
                                         <div key={i} id={`timeline-item-${i}`} className="relative pl-10 mb-5 last:mb-0 z-10">
                                             <div className={`absolute left-0 w-5 h-5 rounded-full border-4 border-white shadow transition-all ${isActive ? 'bg-blue-500 ring-2 ring-blue-200 ring-offset-1 scale-110' : isPassed ? 'bg-slate-400' : 'bg-slate-200'}`} style={{ top: 6 }} />
                                             <div className="flex justify-between mb-1">
-                                                <span className="text-[10px] font-mono text-slate-500">{new Date(n.event.timestamp).toLocaleTimeString()}</span>
-                                                {i === 0 && <span className="text-[9px] bg-slate-100 text-slate-400 font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">START</span>}
-                                                {i === journey.nodes.length - 1 && <span className="text-[9px] bg-slate-100 text-slate-400 font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">END</span>}
+                                                <span className="text-[10px] font-mono text-[var(--text-muted)]">{new Date(n.event.timestamp).toLocaleTimeString()}</span>
+                                                {i === 0 && <span className="text-[9px] bg-slate-100 text-[var(--text-secondary)] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">START</span>}
+                                                {i === journey.nodes.length - 1 && <span className="text-[9px] bg-slate-100 text-[var(--text-secondary)] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">END</span>}
                                             </div>
                                             <div className={`p-3 rounded-lg border transition-all ${isActive ? 'bg-blue-50/60 border-blue-200 shadow-sm' : 'bg-white border-slate-200'}`}>
-                                                <div className={`font-mono text-[10px] font-bold ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>{n.cam.id}</div>
-                                                <div className={`font-bold text-[13px] leading-tight mb-2 ${isActive ? 'text-slate-900' : 'text-slate-700'}`}>{n.cam.name}</div>
+                                                <div className={`font-mono text-[10px] font-bold ${isActive ? 'text-blue-600' : 'text-[var(--text-secondary)]'}`}>{n.cam.id}</div>
+                                                <div className={`font-bold text-[13px] leading-tight mb-2 ${isActive ? 'text-[var(--blue)]' : 'text-[var(--text-primary)]'}`}>{n.cam.name}</div>
                                                 <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded inline-flex items-center gap-1 mb-3 border border-green-100 uppercase">
                                                     <CheckCircle size={9} /> {i === 0 ? 'Vehicle Detected' : 'Same Vehicle Matched'}
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
                                                     <div>
-                                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">ANPR</span>
+                                                        <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-widest block">ANPR</span>
                                                         <span className="text-[11px] font-mono font-bold text-slate-700">{n.event.anpr_confidence}%</span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Speed</span>
+                                                        <span className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-widest block">Speed</span>
                                                         <span className="text-[11px] font-mono font-bold text-slate-700">{n.event.speed} km/h</span>
                                                     </div>
                                                 </div>
@@ -519,29 +519,29 @@ export default function VehicleJourneyReplay() {
             ) : journey && 'error' in journey ? (
                 /* ── Error states ── */
                 <div className="flex-1 flex flex-col items-center justify-center bg-white p-6 gap-4">
-                    <Car size={36} className="text-slate-300" />
+                    <Car size={36} className="text-[var(--text-secondary)]" />
                     <h2 className="text-xl font-bold text-slate-700">{journey.error}</h2>
-                    <p className="text-slate-500 text-sm">{journey.msg}</p>
+                    <p className="text-[var(--text-muted)] text-sm">{journey.msg}</p>
                     <button onClick={() => { setSearchInput(''); navigate('/replay'); }}
-                        className="px-6 py-2 bg-slate-900 hover:bg-black text-white text-sm font-bold tracking-widest uppercase rounded">
+                        className="px-6 py-2 bg-[var(--bg-base)] hover:bg-[var(--bg-base)] text-[var(--text-primary)] text-sm font-bold tracking-widest uppercase rounded">
                         Search Another Vehicle
                     </button>
                 </div>
             ) : (
                 /* ── Empty / landing state ── */
-                <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 p-6">
+                <div className="flex-1 flex flex-col items-center justify-center bg-[var(--bg-base)] p-6">
                     <div className="max-w-lg w-full">
                         <div className="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 mx-auto"><RotateCcw size={32} /></div>
                         <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center">Vehicle Journey Replay</h2>
-                        <p className="text-slate-500 text-center mb-10 leading-relaxed">Search for a vehicle license plate to reconstruct its complete journey across the city's camera network.</p>
+                        <p className="text-[var(--text-muted)] text-center mb-10 leading-relaxed">Search for a vehicle license plate to reconstruct its complete journey across the city's camera network.</p>
                         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4">Recent Demo Vehicles</h3>
+                            <h3 className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4">Recent Demo Vehicles</h3>
                             <div className="grid grid-cols-2 gap-3">
                                 {['DL01AB1234', 'HR26EF7890', 'DL03CD4567', 'UP16MN8901'].map(v => (
                                     <button key={v} onClick={() => { setSearchInput(v); navigate(`/replay?vehicle=${v}`); }}
                                         className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-colors group">
                                         <div className="flex items-center gap-2">
-                                            <Car size={15} className="text-slate-400 group-hover:text-blue-500" />
+                                            <Car size={15} className="text-[var(--text-secondary)] group-hover:text-blue-500" />
                                             <span className="font-mono font-bold text-slate-700 text-sm">{v}</span>
                                         </div>
                                         <Play size={11} className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />

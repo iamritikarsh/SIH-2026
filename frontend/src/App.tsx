@@ -29,21 +29,21 @@ function Sidebar({ state }: { state: SystemState | null }) {
     ];
 
     return (
-        <aside className="w-[220px] flex-none bg-[var(--bg-surface)] border-r border-[var(--border-subtle)] flex flex-col h-screen z-20">
+        <aside className="w-[220px] flex-none bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] flex flex-col h-screen z-20">
             {/* Brand */}
-            <div className="px-5 py-4 border-b border-[var(--border-subtle)] flex items-center gap-3">
+            <div className="px-5 py-4 border-b border-[var(--sidebar-border)] flex items-center gap-3">
                 <div className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center flex-none">
                     <Activity size={14} className="text-white" />
                 </div>
                 <div>
-                    <div className="text-[11px] font-700 tracking-[0.12em] text-slate-200 leading-tight font-bold uppercase">City Traffic</div>
-                    <div className="text-[9px] tracking-[0.08em] text-slate-500 uppercase">Intelligence Engine</div>
+                    <div className="text-[11px] tracking-[0.12em] text-[var(--sidebar-text)] leading-tight font-bold uppercase">City Traffic</div>
+                    <div className="text-[9px] tracking-[0.08em] text-[var(--sidebar-text-muted)] uppercase">Intelligence Engine</div>
                 </div>
             </div>
 
             {/* Nav */}
             <nav className="flex-1 pt-3 pb-2">
-                <div className="px-4 mb-2 label-xs text-[var(--text-muted)]">Navigation</div>
+                <div className="px-4 mb-2 label-xs text-[var(--sidebar-text-muted)]">Navigation</div>
                 {navItems.map(({ path, label, icon: Icon, end }) => (
                     <NavLink
                         key={path}
@@ -52,8 +52,8 @@ function Sidebar({ state }: { state: SystemState | null }) {
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-5 py-2.5 text-[13px] font-medium transition-all duration-150 ${
                                 isActive
-                                    ? 'nav-item-active text-[#7ab3ff]'
-                                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]'
+                                    ? 'nav-item-active'
+                                    : 'text-[var(--sidebar-text-muted)] hover:text-[var(--sidebar-text)] hover:bg-white/[0.03]'
                             }`
                         }
                     >
@@ -64,15 +64,15 @@ function Sidebar({ state }: { state: SystemState | null }) {
             </nav>
 
             {/* Simulation status */}
-            <div className="px-5 py-4 border-t border-[var(--border-subtle)]">
-                <div className="label-xs mb-2">Simulation Mode</div>
+            <div className="px-5 py-4 border-t border-[var(--sidebar-border)]">
+                <div className="label-xs mb-2 text-[var(--sidebar-text-muted)]">Simulation Mode</div>
                 <div className="flex items-center justify-between">
-                    <span className={state?.is_simulating ? 'status-sim' : 'text-[var(--text-muted)] text-[10px] font-semibold tracking-widest uppercase'}>
+                    <span className={state?.is_simulating ? 'status-sim' : 'text-[var(--sidebar-text-muted)] text-[10px] font-semibold tracking-widest uppercase'}>
                         {state?.is_simulating ? 'SIMULATION ACTIVE' : 'PAUSED'}
                     </span>
                     {state && (
-                        <span className="mono text-[10px] text-[var(--text-muted)] bg-[var(--bg-card)] px-2 py-0.5 rounded">
-                            {state.simulation_speed}Ã—
+                        <span className="mono text-[10px] text-[var(--sidebar-text-muted)] bg-white/[0.05] px-2 py-0.5 rounded">
+                            {state.simulation_speed}x
                         </span>
                     )}
                 </div>
@@ -119,18 +119,18 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
             {/* Status pills */}
             <div className="hidden md:flex items-center gap-4">
                 {connStatus === 'CONNECTING' && (
-                    <span className="text-amber-400 text-[10px] font-bold tracking-wider uppercase animate-pulse flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                    <span className="text-[var(--amber)] text-[10px] font-bold tracking-wider uppercase animate-pulse flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--amber)]"></div>
                         TRAFFIC ENGINE STARTING...
                     </span>
                 )}
                 {connStatus === 'OFFLINE' && (
                     <div className="flex items-center gap-3">
-                        <span className="text-red-400 text-[10px] font-bold tracking-wider uppercase flex items-center gap-2">
+                        <span className="text-[var(--red)] text-[10px] font-bold tracking-wider uppercase flex items-center gap-2">
                             <AlertTriangle size={12} />
                             BACKEND TEMPORARILY UNAVAILABLE
                         </span>
-                        <button onClick={() => window.location.reload()} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-[10px] text-white transition-colors border border-white/10">
+                        <button onClick={() => window.location.reload()} className="px-2 py-1 bg-[var(--bg-base)] hover:bg-[var(--border)] rounded text-[10px] text-[var(--text-primary)] transition-colors border border-[var(--border)]">
                             RETRY CONNECTION
                         </button>
                     </div>
@@ -167,7 +167,7 @@ function Topbar({ state, connStatus }: { state: SystemState | null, connStatus: 
                 />
             </div>
 
-            <button className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors rounded hover:bg-white/5">
+            <button className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors rounded hover:bg-[var(--bg-base)]">
                 <Settings size={16} />
             </button>
         </header>

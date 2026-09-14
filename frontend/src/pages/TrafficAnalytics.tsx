@@ -96,7 +96,7 @@ export default function TrafficAnalytics() {
     return (
         <div className="flex flex-col h-full gap-6">
             <div>
-                <h1 className="text-2xl font-bold tracking-tight text-white mb-1">TRAFFIC ANALYTICS</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] mb-1">TRAFFIC ANALYTICS</h1>
                 <p className="text-[var(--text-secondary)] text-sm">Understand traffic movement, speed and congestion across monitored locations.</p>
             </div>
 
@@ -104,14 +104,14 @@ export default function TrafficAnalytics() {
             <div className="grid grid-cols-5 gap-4">
                 <div className="metric-card">
                     <div className="label-xs mb-2">VEHICLES DETECTED</div>
-                    <div className="text-3xl font-bold text-white">{totalDetections}</div>
+                    <div className="text-3xl font-bold text-[var(--text-primary)]">{totalDetections}</div>
                 </div>
                 <div className="metric-card">
-                    <div className="label-xs mb-2 text-blue-400">ACTIVE VEHICLES</div>
+                    <div className="label-xs mb-2 text-[var(--blue)]">ACTIVE VEHICLES</div>
                     <div className="text-3xl font-bold text-blue-100">{activeVehicles}</div>
                 </div>
                 <div className="metric-card">
-                    <div className="label-xs mb-2 text-amber-400">AVERAGE SPEED</div>
+                    <div className="label-xs mb-2 text-amber-600">AVERAGE SPEED</div>
                     <div className="text-3xl font-bold text-amber-100">{avgSpeed} <span className="text-sm font-medium text-[var(--text-muted)]">km/h</span></div>
                 </div>
                 <div className="metric-card">
@@ -120,7 +120,7 @@ export default function TrafficAnalytics() {
                 </div>
                 <div className="metric-card border-l-[3px] border-l-amber-500">
                     <div className="label-xs mb-2 text-amber-500">CONGESTION</div>
-                    <div className="text-2xl font-bold text-white tracking-wider">{congestion}</div>
+                    <div className="text-2xl font-bold text-[var(--text-primary)] tracking-wider">{congestion}</div>
                 </div>
             </div>
 
@@ -198,19 +198,19 @@ export default function TrafficAnalytics() {
                         <div className="p-2 overflow-y-auto custom-scrollbar flex-1">
                             {camChartData.map(c => {
                                 let status = "LOW";
-                                let color = "text-green-400";
+                                let color = "text-green-600";
                                 let bg = "bg-green-400/10 border-green-400/20";
                                 
                                 if (c.avgSpeed > 0 && c.avgSpeed < 35) {
-                                    status = "HIGH"; color = "text-red-400"; bg = "bg-red-400/10 border-red-400/20";
+                                    status = "HIGH"; color = "text-red-600"; bg = "bg-red-400/10 border-red-400/20";
                                 } else if (c.avgSpeed > 0 && c.avgSpeed < 50) {
-                                    status = "MEDIUM"; color = "text-amber-400"; bg = "bg-amber-400/10 border-amber-400/20";
+                                    status = "MEDIUM"; color = "text-amber-600"; bg = "bg-amber-400/10 border-amber-400/20";
                                 }
 
                                 return (
                                     <div key={c.name} className="flex items-center justify-between p-3 border-b border-[var(--border-subtle)] last:border-0 hover:bg-white/[0.02] cursor-pointer" onClick={() => navigate('/cameras')}>
                                         <div>
-                                            <div className="mono text-xs font-semibold text-white">{c.name}</div>
+                                            <div className="mono text-xs font-semibold text-[var(--text-primary)]">{c.name}</div>
                                             <div className="text-[11px] text-[var(--text-muted)]">{c.fullName}</div>
                                         </div>
                                         <div className={`text-[10px] font-bold px-2 py-1 rounded border ${color} ${bg}`}>
@@ -230,7 +230,7 @@ export default function TrafficAnalytics() {
                             {topRoutes.length === 0 && <div className="text-center text-sm text-[var(--text-muted)] mt-10">Accumulating route data...</div>}
                             {topRoutes.map(([route, count], i) => (
                                 <div key={i} className="mb-4 last:mb-0 cursor-pointer group" onClick={() => navigate('/tracking')}>
-                                    <div className="mono text-[11px] text-blue-300 mb-1 group-hover:text-blue-400 transition-colors">
+                                    <div className="mono text-[11px] text-[var(--blue)] mb-1 group-hover:text-[var(--blue)] transition-colors">
                                         {route.split(' → ').map((n, idx, arr) => (
                                             <span key={idx}>
                                                 {n}

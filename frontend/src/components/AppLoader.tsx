@@ -134,25 +134,16 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
   return (
     <div
       className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center
-        bg-[#080e1a] transition-opacity duration-500 ${exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-      style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+        bg-[#F4F6F8] transition-opacity duration-500 ${exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Grid overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        className="absolute inset-0 pointer-events-none opacity-[0.4]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(59,122,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,122,235,1) 1px, transparent 1px)',
+            'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
-        }}
-      />
-
-      {/* Radial glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 50% at 50% 55%, rgba(59,122,235,0.07) 0%, transparent 70%)',
         }}
       />
 
@@ -161,9 +152,9 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
 
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-xl bg-white border border-[#E2E8F0] shadow-sm flex items-center justify-center">
             <svg viewBox="0 0 28 28" width="28" height="28" fill="none" stroke="currentColor"
-              strokeWidth="1.5" strokeLinecap="round" className="text-blue-400">
+              strokeWidth="1.5" strokeLinecap="round" className="text-[#2563EB]">
               <rect x="3" y="3" width="8" height="8" rx="1" />
               <rect x="17" y="3" width="8" height="8" rx="1" />
               <rect x="3" y="17" width="8" height="8" rx="1" />
@@ -173,10 +164,10 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
             </svg>
           </div>
           <div className="text-center">
-            <div className="text-white text-lg font-bold tracking-[0.18em] uppercase">
+            <div className="text-[#17212B] text-lg font-bold tracking-[0.18em] uppercase">
               City Traffic
             </div>
-            <div className="text-blue-400/70 text-[10px] tracking-[0.25em] uppercase mt-0.5">
+            <div className="text-[#64748B] text-[10px] tracking-[0.25em] uppercase mt-0.5">
               Intelligence Engine
             </div>
           </div>
@@ -184,59 +175,55 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
 
         {/* Animated Road SVG */}
         <div
-          className="w-full rounded-lg overflow-hidden border border-blue-900/30"
-          style={{ background: 'rgba(11,17,33,0.9)' }}
+          className="w-full rounded-lg overflow-hidden border border-[#E2E8F0] bg-white shadow-sm"
         >
           <svg viewBox="0 0 200 100" className="w-full" style={{ height: 100 }}>
             {/* Road surface */}
-            <rect x="0" y="30" width="200" height="40" fill="#0d1526" />
+            <rect x="0" y="30" width="200" height="40" fill="#F8FAFC" />
 
-            {/* Road centre dashes — pure CSS animation, always forward */}
+            {/* Road centre dashes ?" pure CSS animation, always forward */}
             {[0, 1, 2, 3, 4].map(i => (
               <rect
                 key={i}
                 y={49}
                 width="22"
                 height="2"
-                fill="rgba(255,255,255,0.12)"
+                fill="rgba(0,0,0,0.08)"
                 style={{ animation: `roadDash 1.5s ${i * -0.3}s linear infinite` }}
               />
             ))}
 
             {/* Lane stripes */}
-            <line x1="0" y1="38" x2="200" y2="38" stroke="rgba(59,122,235,0.15)" strokeWidth="0.5" />
-            <line x1="0" y1="62" x2="200" y2="62" stroke="rgba(59,122,235,0.15)" strokeWidth="0.5" />
+            <line x1="0" y1="38" x2="200" y2="38" stroke="rgba(0,0,0,0.04)" strokeWidth="0.5" />
+            <line x1="0" y1="62" x2="200" y2="62" stroke="rgba(0,0,0,0.04)" strokeWidth="0.5" />
 
             {/* Edge glow */}
-            <rect x="0" y="28" width="200" height="3" fill="rgba(59,122,235,0.25)" />
-            <rect x="0" y="69" width="200" height="3" fill="rgba(59,122,235,0.25)" />
+            <rect x="0" y="28" width="200" height="3" fill="rgba(0,0,0,0.03)" />
+            <rect x="0" y="69" width="200" height="3" fill="rgba(0,0,0,0.03)" />
 
             {/* Camera scanner */}
-            <rect x="96" y="0" width="8" height="100" fill="url(#scanGrad)" opacity="0.4" />
+            <rect x="96" y="0" width="8" height="100" fill="url(#scanGrad)" opacity="0.1" />
             <rect
               x="99.5" y="0" width="1" height="100"
-              fill="rgba(59,122,235,0.6)"
-              style={{ animation: 'scanPulse 2s ease-in-out infinite' }}
+              fill="rgba(37,99,235,0.4)"
             />
 
             {/* Camera icon */}
-            <rect x="92" y="2" width="16" height="9" rx="2" fill="#162035" stroke="rgba(59,122,235,0.5)" strokeWidth="0.6" />
-            <circle cx="100" cy="6.5" r="2.5" fill="none" stroke="#3b7aeb" strokeWidth="0.8" />
-            <circle cx="100" cy="6.5" r="1" fill="#3b7aeb" opacity="0.8" />
+            <rect x="92" y="2" width="16" height="9" rx="2" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="0.6" />
+            <circle cx="100" cy="6.5" r="2.5" fill="none" stroke="#64748B" strokeWidth="0.8" />
+            <circle cx="100" cy="6.5" r="1" fill="#64748B" opacity="0.8" />
 
             {/* Animated cars */}
             {cars.map(car => (
               <g key={car.id} transform={`translate(${car.x}, ${laneY[car.lane]})`}>
-                <rect x="-7" y="-3" width="14" height="6" rx="1.5" fill={car.color} opacity="0.85" />
-                <rect x="-3" y="-2.5" width="7" height="5" rx="1" fill="rgba(255,255,255,0.15)" />
-                <rect x="6" y="-2" width="2" height="1.5" rx="0.5" fill="rgba(255,240,180,0.9)" />
-                <rect x="6" y="0.5" width="2" height="1.5" rx="0.5" fill="rgba(255,240,180,0.9)" />
-                <ellipse cx="0" cy="0" rx="8" ry="3" fill={car.color} opacity="0.08" />
+                <rect x="-7" y="-3" width="14" height="6" rx="1.5" fill={car.color === '#ef4444' ? '#DC2626' : car.color === '#3b7aeb' ? '#2563EB' : '#64748B'} opacity="0.9" />
+                <rect x="-3" y="-2.5" width="7" height="5" rx="1" fill="rgba(255,255,255,0.2)" />
+                <rect x="6" y="-2" width="2" height="1.5" rx="0.5" fill="rgba(255,255,255,0.8)" />
+                <rect x="6" y="0.5" width="2" height="1.5" rx="0.5" fill="rgba(255,255,255,0.8)" />
                 {(car.id === 2 || car.id === 5) && (
                   <rect x="-8" y="-4" width="16" height="8" rx="1"
-                    fill="none" stroke="rgba(34,197,94,0.7)" strokeWidth="0.5"
+                    fill="none" stroke="#16A34A" strokeWidth="0.5"
                     strokeDasharray="3 2"
-                    style={{ animation: 'boxPulse 1.5s ease-in-out infinite' }}
                   />
                 )}
               </g>
@@ -244,9 +231,9 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
 
             <defs>
               <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b7aeb" stopOpacity="0" />
-                <stop offset="50%" stopColor="#3b7aeb" stopOpacity="1" />
-                <stop offset="100%" stopColor="#3b7aeb" stopOpacity="0" />
+                <stop offset="0%" stopColor="#2563EB" stopOpacity="0" />
+                <stop offset="50%" stopColor="#2563EB" stopOpacity="1" />
+                <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>
@@ -254,11 +241,11 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
 
         {/* Status & progress */}
         <div className="w-full flex flex-col items-center gap-4">
-          {/* Stage label — animates in when it changes */}
+          {/* Stage label ?" animates in when it changes */}
           <div className="text-center h-[36px] flex flex-col items-center justify-center">
             <div
               key={stageLabel}
-              className="text-[11px] tracking-[0.2em] text-blue-300/80 uppercase"
+              className="text-[11px] tracking-[0.2em] text-[#64748B] uppercase"
               style={{ animation: 'fadeSlideIn 0.35s ease-out' }}
             >
               {stageLabel}
@@ -266,27 +253,25 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
           </div>
 
           {/* Progress bar */}
-          <div className="w-full h-[3px] bg-blue-950/60 rounded-full overflow-hidden">
+          <div className="w-full h-[4px] bg-[#E2E8F0] rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full"
+              className="h-full rounded-full bg-[#2563EB]"
               style={{
                 width: `${visiblePct}%`,
-                background: 'linear-gradient(90deg, #1e4fba, #3b7aeb, #60a5fa)',
-                boxShadow: '0 0 10px rgba(59,122,235,0.6)',
                 transition: 'width 80ms linear',
               }}
             />
           </div>
 
           {/* Percentage */}
-          <div className="text-[11px] text-blue-500/60 tracking-widest font-mono tabular-nums">
+          <div className="text-[11px] text-[#94A3B8] tracking-widest font-mono tabular-nums">
             {String(visiblePct).padStart(3, '0')}%
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-[9px] text-blue-900/60 tracking-[0.15em] uppercase">
-          Smart India Hackathon 2026 · Multi-Camera ANPR Trajectory Engine
+        <div className="text-[9px] text-[#94A3B8] tracking-[0.15em] uppercase">
+          Smart India Hackathon 2026 • Multi-Camera ANPR Trajectory Engine
         </div>
       </div>
 
@@ -295,14 +280,6 @@ export default function AppLoader({ onComplete, backendOffline }: Props) {
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(5px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scanPulse {
-          0%, 100% { opacity: 0.6; }
-          50%       { opacity: 1; }
-        }
-        @keyframes boxPulse {
-          0%, 100% { stroke-opacity: 0.4; }
-          50%       { stroke-opacity: 1; }
         }
         @keyframes roadDash {
           from { transform: translateX(-22px); }

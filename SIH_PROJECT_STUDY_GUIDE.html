@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SIH 2026 - Project Study Guide</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 900px; margin: 0 auto; padding: 40px; background-color: #ffffff; }
+  h1 { color: #0f172a; margin-bottom: 5px; font-size: 2.2em; }
+  h2 { border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 40px; color: #1d4ed8; }
+  h3 { color: #0f172a; margin-top: 25px; }
+  img.screenshot { max-width: 100%; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin: 15px 0; border: 1px solid #e2e8f0; }
+  .text-center { text-align: center; }
+  ul { margin-bottom: 20px; padding-left: 20px; }
+  li { margin-bottom: 8px; font-size: 1.05em; }
+  .highlight { font-weight: bold; color: #2563eb; }
+  .tech-box { background: #f8fafc; border-left: 4px solid #3b82f6; padding: 15px; margin: 15px 0; border-radius: 4px; font-size: 1.05em; }
+  .subtitle { font-size: 1.2em; color: #64748b; margin-top: 0; }
+</style>
+</head>
+<body>
+  <div class="text-center">
+    <img src="docs/assets/sih-logo-clean.png" alt="SIH Logo" style="width: 150px;" />
+    <h1>City-Wide AI Traffic Intelligence Engine</h1>
+    <p class="subtitle"><b>Smart India Hackathon 2026 &mdash; Complete Study Guide</b></p>
+  </div>
+
+  <h2>1. The Problem Statement (Why we built this)</h2>
+  <ul>
+    <li><b>Urban Congestion:</b> Traffic jams waste time and fuel. Cities are growing faster than road networks.</li>
+    <li><b>Disconnected CCTVs:</b> Cities have thousands of cameras, but they don't "talk" to each other. Humans cannot watch 1,000s of screens manually.</li>
+    <li><b>Hard to Track Vehicles:</b> Tracking a specific vehicle (e.g., a speeding car or a criminal) across the city grid manually is nearly impossible.</li>
+    <li><b>Lack of Real-Time Alerts:</b> Traffic police need instant, automated alerts for over-speeding, sudden congestion, and unusual routes, rather than finding out after it happens.</li>
+  </ul>
+
+  <h2>2. How We Solved It (Our Features)</h2>
+  <p>We built an AI-powered command center that connects all city cameras into one smart network. Instead of humans watching screens, AI does the heavy lifting.</p>
+
+  <h3>A. Command Dashboard</h3>
+  <ul>
+    <li><b>What it is:</b> A bird's-eye view of the city's traffic health.</li>
+    <li><b>Benefit:</b> Live KPIs (Key Performance Indicators) show active alerts, total vehicles detected, and live camera statuses in one premium interface.</li>
+  </ul>
+  <img src="docs/assets/dashboard.png" class="screenshot" />
+
+  <h3>B. Cross-Camera Tracking (Vehicle Journey Replay)</h3>
+  <ul>
+    <li><b>What it is:</b> Search for any License Plate, and the system reconstructs its exact path across multiple cameras on a map.</li>
+    <li><b>Benefit:</b> Cinematic Google Maps interface with glowing trails and an auto-scrolling timeline makes forensic investigations instant and easy.</li>
+  </ul>
+  <img src="docs/assets/replay.png" class="screenshot" />
+
+  <h3>C. Automated Alert Engine</h3>
+  <ul>
+    <li><b>What it is:</b> A real-time queue that detects violations instantly.</li>
+    <li><b>Benefit:</b> Automatically flags vehicles for <b>High Speed</b>, <b>Unusual Routes</b>, and triggers <b>Congestion</b> warnings. Operators can click to resolve alerts in real-time.</li>
+  </ul>
+  <img src="docs/assets/alerts.png" class="screenshot" />
+
+  <h3>D. Live Traffic Analytics</h3>
+  <ul>
+    <li><b>What it is:</b> Real-time charts analyzing vehicle flow and speeds.</li>
+    <li><b>Benefit:</b> Automatically categorizes road congestion into LOW, MEDIUM, or HIGH based on dynamic average speed tracking.</li>
+  </ul>
+  <img src="docs/assets/analytics.png" class="screenshot" />
+
+  <h2>3. Technology Stack (How we built it)</h2>
+  
+  <div class="tech-box">
+    <b>1. Computer Vision & AI (The Brains)</b>
+    <ul>
+      <li><span class="highlight">YOLOv8 (You Only Look Once):</span> Used for high-speed <b>Object Detection</b>. It scans camera frames to find cars, trucks, and bikes instantly.</li>
+      <li><span class="highlight">PaddleOCR (Optical Character Recognition):</span> Used for <b>ANPR (Automatic Number Plate Recognition)</b>. It extracts text (license plates) from the bounding boxes detected by YOLO.</li>
+      <li><span class="highlight">DeepSORT:</span> Used for <b>Vehicle Re-Identification (Tracking)</b>. It assigns a unique ID to a car so the system remembers it as it moves across different frames and cameras.</li>
+    </ul>
+  </div>
+
+  <div class="tech-box">
+    <b>2. Frontend (The UI / Dashboard)</b>
+    <ul>
+      <li><span class="highlight">React.js 19 & Tailwind CSS v4:</span> Used to build the dark, premium, enterprise-grade command center interface quickly and cleanly.</li>
+      <li><span class="highlight">React-Leaflet & Google Maps:</span> Powers the cinematic map trajectories and live camera plotting without needing expensive API keys.</li>
+    </ul>
+  </div>
+
+  <div class="tech-box">
+    <b>3. Backend (The Engine)</b>
+    <ul>
+      <li><span class="highlight">Python 3.10+ & FastAPI:</span> Handles the heavy lifting. We use Python's <b>asyncio</b> to simulate a real-time, tick-based environment for the SIH prototype presentation.</li>
+    </ul>
+  </div>
+
+  <h2>4. Quick Pitch for Judges</h2>
+  <ul>
+    <li><i>"Our system transforms dumb CCTVs into a smart city brain."</i></li>
+    <li><i>"Instead of humans watching screens, AI watches the cameras, reads the plates using OCR, and tracks vehicles across the map using DeepSORT."</i></li>
+    <li><i>"The frontend provides a premium, low-latency dashboard for traffic police to resolve alerts and analyze congestion in real-time."</i></li>
+  </ul>
+
+</body>
+</html>

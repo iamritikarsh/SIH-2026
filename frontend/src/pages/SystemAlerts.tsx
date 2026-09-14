@@ -77,7 +77,7 @@ export default function SystemAlerts() {
     return (
         <div className="flex flex-col h-full">
             <div className="mb-6">
-                <h1 className="text-2xl font-bold tracking-tight text-white mb-1">SYSTEM ALERTS</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] mb-1">SYSTEM ALERTS</h1>
                 <p className="text-[var(--text-secondary)] text-sm">Monitor important traffic events detected by the system.</p>
             </div>
 
@@ -88,15 +88,15 @@ export default function SystemAlerts() {
                     <div className="text-2xl font-semibold">{activeAlerts.length}</div>
                 </div>
                 <div className="metric-card flex flex-col justify-center">
-                    <div className="label-xs mb-1 text-red-400">HIGH PRIORITY</div>
+                    <div className="label-xs mb-1 text-red-600">HIGH PRIORITY</div>
                     <div className="text-2xl font-semibold text-red-100">{highPriority.length}</div>
                 </div>
                 <div className="metric-card flex flex-col justify-center">
-                    <div className="label-xs mb-1 text-amber-400">MEDIUM</div>
+                    <div className="label-xs mb-1 text-amber-600">MEDIUM</div>
                     <div className="text-2xl font-semibold text-amber-100">{mediumPriority.length}</div>
                 </div>
                 <div className="metric-card flex flex-col justify-center">
-                    <div className="label-xs mb-1 text-green-400">RESOLVED</div>
+                    <div className="label-xs mb-1 text-green-600">RESOLVED</div>
                     <div className="text-2xl font-semibold text-green-100">{resolved.length}</div>
                 </div>
             </div>
@@ -116,8 +116,8 @@ export default function SystemAlerts() {
                                     onClick={() => setFilter(f as any)}
                                     className={`px-3 py-1 rounded text-xs font-semibold tracking-wider transition-colors ${
                                         filter === f 
-                                            ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' 
-                                            : 'bg-[var(--bg-base)] text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-white'
+                                            ? 'bg-blue-600/20 text-[var(--blue)] border border-blue-500/30' 
+                                            : 'bg-[var(--bg-base)] text-[var(--text-muted)] border border-[var(--border-subtle)] hover:text-[var(--text-primary)]'
                                     }`}
                                 >
                                     {f}
@@ -150,7 +150,7 @@ export default function SystemAlerts() {
                                             className={`cursor-pointer ${selectedAlert?.id === alert.id ? 'bg-white/[0.04]' : ''}`}
                                         >
                                             <td className="text-center">{getIcon(alert.type)}</td>
-                                            <td className="font-semibold text-white text-xs">{alert.title}</td>
+                                            <td className="font-semibold text-[var(--text-primary)] text-xs">{alert.title}</td>
                                             <td className="text-[var(--text-secondary)]">{alert.message}</td>
                                             <td className="mono text-xs">{new Date(alert.timestamp).toLocaleTimeString()}</td>
                                             <td>{getPriority(alert.type)}</td>
@@ -174,9 +174,9 @@ export default function SystemAlerts() {
                         <div className="panel-header flex-col items-start gap-2 bg-[var(--bg-card)]">
                             <div className="flex items-center justify-between w-full">
                                 <span className="label-xs">ALERT DETAILS</span>
-                                <button onClick={() => setSelectedAlert(null)} className="text-[var(--text-muted)] hover:text-white">✕</button>
+                                <button onClick={() => setSelectedAlert(null)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)]">✕</button>
                             </div>
-                            <div className="text-lg font-bold text-white flex items-center gap-2">
+                            <div className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                                 {getIcon(selectedAlert.type)} {selectedAlert.title}
                             </div>
                         </div>
@@ -207,14 +207,14 @@ export default function SystemAlerts() {
                         <div className="p-4 border-t border-[var(--border-subtle)] flex flex-col gap-2">
                             <button 
                                 onClick={() => handleNavigate(selectedAlert)}
-                                className="w-full py-2 bg-[var(--blue-dim)] border border-[var(--blue)] text-[var(--blue)] hover:bg-blue-600 hover:text-white transition-colors rounded text-sm font-semibold tracking-wide"
+                                className="w-full py-2 bg-[var(--blue-dim)] border border-[var(--blue)] text-[var(--blue)] hover:bg-blue-600 hover:text-[var(--text-primary)] transition-colors rounded text-sm font-semibold tracking-wide"
                             >
                                 {selectedAlert.type === 'CONGESTION' ? 'VIEW ANALYTICS' : 'TRACK VEHICLE'}
                             </button>
                             {selectedAlert.status !== 'RESOLVED' && (
                                 <button 
                                     onClick={(e) => handleResolve(selectedAlert.id, e)}
-                                    className="w-full py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-green-600/20 hover:border-green-500 hover:text-green-400 transition-colors rounded text-sm font-semibold tracking-wide flex justify-center items-center gap-2"
+                                    className="w-full py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-green-600/20 hover:border-green-500 hover:text-green-600 transition-colors rounded text-sm font-semibold tracking-wide flex justify-center items-center gap-2"
                                 >
                                     <CheckCircle2 size={16} /> MARK RESOLVED
                                 </button>

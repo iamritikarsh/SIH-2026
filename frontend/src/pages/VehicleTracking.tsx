@@ -164,7 +164,7 @@ export default function VehicleTracking() {
             <div className="panel">
                 <form onSubmit={handleSearch} className="flex items-center gap-4 px-5 py-3.5">
                     <div className="flex-1">
-                        <div className="label-xs mb-1 text-blue-400">TRACK A VEHICLE</div>
+                        <div className="label-xs mb-1 text-[var(--blue)]">TRACK A VEHICLE</div>
                         <p className="text-[var(--text-secondary)] text-[12px]">Enter a vehicle ID or license plate to reconstruct its city-wide trajectory.</p>
                     </div>
                     <div className="relative flex-none">
@@ -183,7 +183,7 @@ export default function VehicleTracking() {
                             TRACK
                         </button>
                         <button type="button" onClick={() => window.location.href = `/replay?vehicle=${searchInput}`}
-                            className="bg-slate-800 hover:bg-slate-700 text-white text-[12px] font-bold px-6 py-2 rounded tracking-wide transition-colors shadow">
+                            className="bg-[var(--bg-card)] hover:bg-[var(--border)] text-[var(--text-primary)] text-[12px] font-bold px-6 py-2 rounded tracking-wide transition-colors shadow">
                             REPLAY JOURNEY
                         </button>
                     </div>
@@ -223,16 +223,16 @@ export default function VehicleTracking() {
                                 </div>
                                 <div className="relative z-10">
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className="label-xs text-green-400 flex items-center gap-1.5">
+                                        <div className="label-xs text-green-600 flex items-center gap-1.5">
                                             <CheckCircle2 size={11} /> VEHICLE IDENTIFIED
                                         </div>
                                         <span className="badge-sim">SIM DATA</span>
                                     </div>
-                                    <div className="mono text-3xl font-bold text-white tracking-wider mb-1">{vehicle.plate}</div>
+                                    <div className="mono text-3xl font-bold text-[var(--text-primary)] tracking-wider mb-1">{vehicle.plate}</div>
                                     <div className="text-[var(--text-secondary)] text-[13px] mb-4">{vehicle.color} {vehicle.type}</div>
                                     <div className="flex items-center gap-3">
                                         <span className="mono text-[11px] bg-[var(--bg-base)] border border-[var(--border-subtle)] px-2 py-1 rounded text-[var(--text-secondary)]">{vehicle.id}</span>
-                                        <span className="text-green-400 text-[11px] font-semibold">{vehicle.status}</span>
+                                        <span className="text-green-600 text-[11px] font-semibold">{vehicle.status}</span>
                                     </div>
                                 </div>
                             </div>
@@ -266,7 +266,7 @@ export default function VehicleTracking() {
                                         {deduplicatedEvents.length} CAMERAS
                                     </div>
                                     {avgMatchConf > 0 && (
-                                        <div className="text-green-400 font-bold text-[11px] mt-1">{avgMatchConf}% MATCH</div>
+                                        <div className="text-green-600 font-bold text-[11px] mt-1">{avgMatchConf}% MATCH</div>
                                     )}
                                 </div>
                             </div>
@@ -300,7 +300,7 @@ export default function VehicleTracking() {
                                                     {i > 0 ? (
                                                         <span className="badge-matched">✓ MATCHED</span>
                                                     ) : (
-                                                        <span className="label-xs text-blue-400">INITIAL DETECTION</span>
+                                                        <span className="label-xs text-[var(--blue)]">INITIAL DETECTION</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@ export default function VehicleTracking() {
                                         {[['Number Plate', 'Strong Match'], ['Appearance', 'Similar'], ['Colour', 'Same'], ['Route', 'Feasible']].map(([k, v]) => (
                                             <div key={k}>
                                                 <div className="label-xs">{k}</div>
-                                                <div className="text-green-400 text-[11px] font-semibold mt-0.5">✓ {v}</div>
+                                                <div className="text-green-600 text-[11px] font-semibold mt-0.5">✓ {v}</div>
                                             </div>
                                         ))}
                                     </div>
@@ -357,12 +357,12 @@ export default function VehicleTracking() {
                                                 <div className="mono text-[11px] text-[var(--text-muted)] mb-1">{new Date(evt.timestamp).toLocaleTimeString()}</div>
                                                 <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded px-3 py-2.5">
                                                     <div className="flex items-center justify-between mb-1.5">
-                                                        <span className="mono text-[12px] font-bold text-blue-400">{evt.camera_id}</span>
+                                                        <span className="mono text-[12px] font-bold text-[var(--blue)]">{evt.camera_id}</span>
                                                         <span className="text-[10px] text-[var(--text-muted)]">{cam?.name}</span>
                                                     </div>
                                                     <div className="flex gap-4 text-[11px]">
-                                                        <span className="text-[var(--text-muted)]">Speed: <span className="text-amber-400">{evt.speed} km/h</span></span>
-                                                        <span className="text-[var(--text-muted)]">Det: <span className="text-green-400">{evt.detection_confidence.toFixed(0)}%</span></span>
+                                                        <span className="text-[var(--text-muted)]">Speed: <span className="text-amber-600">{evt.speed} km/h</span></span>
+                                                        <span className="text-[var(--text-muted)]">Det: <span className="text-green-600">{evt.detection_confidence.toFixed(0)}%</span></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -380,16 +380,16 @@ export default function VehicleTracking() {
                         <div className="panel flex-1 flex flex-col overflow-hidden" style={{ minHeight: 440 }}>
                             <div className="panel-header flex-none">
                                 <span className="text-[13px] font-semibold text-[var(--text-primary)] flex items-center gap-2">
-                                    <MapPin size={13} className="text-blue-400" /> City Map Trajectory
+                                    <MapPin size={13} className="text-[var(--blue)]" /> City Map Trajectory
                                 </span>
                                 <div className="flex items-center gap-3">
                                     {deduplicatedEvents.length > 0 && (
-                                        <span className="mono text-[10px] text-green-400 font-bold">
+                                        <span className="mono text-[10px] text-green-600 font-bold">
                                             {deduplicatedEvents.length} CAMERAS
                                         </span>
                                     )}
                                     {avgMatchConf > 0 && (
-                                        <span className="mono text-[10px] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded">
+                                        <span className="mono text-[10px] text-green-600 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded">
                                             {avgMatchConf}% MATCH
                                         </span>
                                     )}
@@ -551,14 +551,14 @@ export default function VehicleTracking() {
                                                     onMouseLeave={() => setHighlightedEventId(null)}
                                                 >
                                                     <td className="mono">{new Date(evt.timestamp).toLocaleTimeString()}</td>
-                                                    <td className="mono text-blue-400">{evt.camera_id}</td>
+                                                    <td className="mono text-[var(--blue)]">{evt.camera_id}</td>
                                                     <td className="text-[var(--text-secondary)]">{cam?.name}</td>
                                                     <td className="mono">{evt.plate}</td>
-                                                    <td className="text-amber-400 mono">{evt.speed} km/h</td>
+                                                    <td className="text-amber-600 mono">{evt.speed} km/h</td>
                                                     <td className="text-right">
                                                         {i === 0
                                                             ? <span className="label-xs">INITIAL</span>
-                                                            : <span className="text-green-400 mono font-bold text-[11px]">{evt.match_confidence}%</span>
+                                                            : <span className="text-green-600 mono font-bold text-[11px]">{evt.match_confidence}%</span>
                                                         }
                                                     </td>
                                                 </tr>
