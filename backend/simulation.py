@@ -351,6 +351,11 @@ class TrafficSimulator:
         self.total_detected_count += 1
         if len(self.events) > 800:
             self.events = self.events[:800]
+        
+        if not hasattr(self, "cam_events"): self.cam_events = {}
+        if cam_id not in self.cam_events: self.cam_events[cam_id] = []
+        self.cam_events[cam_id].insert(0, event)
+        if len(self.cam_events[cam_id]) > 6: self.cam_events[cam_id] = self.cam_events[cam_id][:6]
             
         if traj:
             traj.path.append(TrajectoryNode(camera_id=cam_id, timestamp=ts.isoformat(), speed=speed))
