@@ -182,7 +182,7 @@ export default function VehicleJourneyReplay() {
     /* ── Playback rAF loop ── */
     useEffect(() => {
         if (!isPlaying || !journey || 'error' in journey || hasFinished) return;
-        const durationMs = 15000 / speed;
+        const durationMs = 60000 / speed;   // 60 s at 1× — feels like a real city drive
 
         const tick = (time: number) => {
             if (!lastTimeRef.current) lastTimeRef.current = time;
@@ -302,8 +302,9 @@ export default function VehicleJourneyReplay() {
                                     zoomControl={false}
                                 >
                                     <TileLayer
-                                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                                        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                                        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                                        attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                        maxZoom={19}
                                     />
 
                                     {/* Inject CSS keyframes into the map DOM */}
@@ -323,17 +324,17 @@ export default function VehicleJourneyReplay() {
                                         <FitBoundsOnLoad coords={journey.pathCoords} />
                                     )}
 
-                                    {/* Ghost route — very subtle dotted background */}
+                                    {/* Ghost route — subtle light grey dashes on light map */}
                                     <Polyline
                                         positions={journey.pathCoords}
-                                        pathOptions={{ color: '#334155', weight: 6, opacity: 0.9, dashArray: '2, 14', lineCap: 'round', lineJoin: 'round' }}
+                                        pathOptions={{ color: '#94a3b8', weight: 5, opacity: 0.5, dashArray: '4, 12', lineCap: 'round', lineJoin: 'round' }}
                                     />
 
-                                    {/* Completed route glow layer — deep blue shadow */}
+                                    {/* Completed route glow layer */}
                                     {animState && animState.currentIdx > 0 && (
                                         <Polyline
                                             positions={[...journey.pathCoords.slice(0, animState.currentIdx), animState.pos]}
-                                            pathOptions={{ color: '#1d4ed8', weight: 14, opacity: 0.25, lineCap: 'round', lineJoin: 'round' }}
+                                            pathOptions={{ color: '#1d4ed8', weight: 16, opacity: 0.18, lineCap: 'round', lineJoin: 'round' }}
                                         />
                                     )}
 
@@ -341,7 +342,7 @@ export default function VehicleJourneyReplay() {
                                     {animState && animState.currentIdx > 0 && (
                                         <Polyline
                                             positions={[...journey.pathCoords.slice(0, animState.currentIdx), animState.pos]}
-                                            pathOptions={{ color: '#60a5fa', weight: 5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' }}
+                                            pathOptions={{ color: '#2563eb', weight: 5, opacity: 1, lineCap: 'round', lineJoin: 'round' }}
                                         />
                                     )}
 
