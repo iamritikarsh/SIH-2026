@@ -2,7 +2,7 @@ import asyncio
 import time
 import random
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional
 
 from models import Camera, Vehicle, DetectionEvent, Alert, Trajectory, TrajectoryNode, SystemState, MatchResult
@@ -111,7 +111,7 @@ class TrafficSimulator:
         self.is_simulating = False
         self.simulation_speed = 1.0
         self.start_real_time = 0
-        self.start_sim_time = datetime.now()
+        self.start_sim_time = datetime.now(timezone.utc)
         self.current_sim_time = self.start_sim_time
         
         self.events: List[DetectionEvent] = []
@@ -132,7 +132,7 @@ class TrafficSimulator:
         self.alerts = []
         self.total_detected_count = 0
         self.trajectories = {v.id: Trajectory(vehicle_id=v.id, path=[]) for v in VEHICLES}
-        self.start_sim_time = datetime.now()
+        self.start_sim_time = datetime.now(timezone.utc)
         self.current_sim_time = self.start_sim_time
         
         # State for continuous route progression
